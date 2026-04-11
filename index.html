@@ -14,6 +14,7 @@
             --bg-deep: #050507;
         }
 
+        /* Deshabilitar selección para mayor inmersión */
         * { -webkit-user-select: none; -moz-user-select: none; user-select: none; outline: none; }
 
         body {
@@ -39,10 +40,10 @@
             align-items: center;
             padding: 2rem;
             background: var(--bg-deep);
-            transition: all 1s cubic-bezier(0.7, 0, 0.3, 1);
+            transition: all 0.8s cubic-bezier(0.7, 0, 0.3, 1);
             z-index: 1000;
         }
-        .layer.hidden { opacity: 0; pointer-events: none; filter: blur(20px); transform: scale(1.1); }
+        .layer.hidden { opacity: 0; pointer-events: none; filter: blur(15px); transform: scale(1.05); }
 
         .arcane-input {
             background: rgba(255, 255, 255, 0.02);
@@ -70,7 +71,7 @@
             text-transform: uppercase;
             font-size: 0.75rem;
         }
-        .arcane-btn:hover { background: var(--gold); color: black; box-shadow: 0 0 30px rgba(197, 160, 89, 0.4); }
+        .arcane-btn:hover { background: var(--gold); color: black; box-shadow: 0 0 30px rgba(197, 160, 89, 0.3); }
 
         .glass-card {
             background: rgba(15, 15, 20, 0.6);
@@ -78,7 +79,6 @@
             backdrop-filter: blur(10px);
             transition: 0.4s;
         }
-        .glass-card:hover { border-color: var(--gold); transform: translateY(-5px); }
 
         .spinner { border: 2px solid rgba(197, 160, 89, 0.1); border-top: 2px solid var(--gold); border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
@@ -86,54 +86,77 @@
 </head>
 <body oncontextmenu="return false;">
 
+    <!-- PANTALLA DE CARGA -->
     <div id="loading-screen" class="layer">
         <div class="spinner mb-4"></div>
-        <p class="cinzel text-[10px] text-gold tracking-widest uppercase">Invocando Entorno Seguro...</p>
+        <p class="cinzel text-[10px] text-gold tracking-widest uppercase">Estableciendo Conexión Arcana...</p>
     </div>
 
+    <!-- CAPA DE AUTENTICACIÓN -->
     <section id="layer-auth" class="layer hidden">
         <div class="max-w-md w-full text-center px-6">
-            <h2 class="cinzel text-gold text-2xl mb-10 tracking-[0.5em]">REGISTRO DE INICIADO</h2>
+            <h2 class="cinzel text-gold text-2xl mb-2 tracking-[0.5em]">REGISTRO DE INICIADO</h2>
+            <p class="spectral italic text-gray-600 mb-10 text-sm">"Toda voluntad debe ser reconocida"</p>
+            
             <div id="auth-forms" class="space-y-4">
-                <input type="email" id="auth-email" placeholder="Firma de Correo" class="arcane-input">
-                <input type="password" id="auth-pass" placeholder="Llave de Paso" class="arcane-input">
+                <input type="email" id="auth-email" placeholder="Correo Electrónico" class="arcane-input">
+                <input type="password" id="auth-pass" placeholder="Palabra de Poder" class="arcane-input">
+                
                 <div class="flex flex-col space-y-4 pt-4">
-                    <button onclick="handleAuthAction('login')" class="arcane-btn">Abrir el Nexo</button>
+                    <button onclick="handleAuthAction('login')" class="arcane-btn">Entrar al Nexo</button>
                     <button onclick="handleAuthAction('register')" class="text-[9px] cinzel text-gold/40 hover:text-gold tracking-[0.3em]">Nueva Inscripción</button>
-                    <button onclick="handleGoogleSignIn()" class="text-[10px] cinzel text-white/50 hover:text-white border border-white/10 p-4 hover:bg-white/5 transition-all">GOOGLE LOGIN</button>
+                    <div class="flex items-center py-4">
+                        <div class="h-px bg-gold/10 flex-1"></div>
+                        <span class="cinzel text-[8px] mx-4 text-gold/30">O</span>
+                        <div class="h-px bg-gold/10 flex-1"></div>
+                    </div>
+                    <button onclick="handleGoogleSignIn()" class="text-[10px] cinzel text-white/50 hover:text-white flex items-center justify-center space-x-3 border border-white/10 p-4 hover:bg-white/5 transition-all">
+                        <span>ACCEDER CON GOOGLE</span>
+                    </button>
                 </div>
             </div>
-            <p id="auth-error" class="text-crimson text-[10px] cinzel mt-8 opacity-0 uppercase"></p>
+            <p id="auth-error" class="text-red-900 text-[10px] cinzel mt-8 opacity-0 transition-opacity uppercase tracking-widest"></p>
         </div>
     </section>
 
-    <div id="main-ui" class="hidden opacity-0 min-h-screen transition-opacity duration-1000">
-        <main class="p-8 md:p-24 max-w-7xl mx-auto text-center">
-            <header class="mb-20">
-                <h1 class="cinzel text-white text-5xl md:text-7xl tracking-[0.3em] font-bold">NEXUS FINALIS</h1>
-                <p id="user-display" class="cinzel text-[10px] text-gold/60 mt-4 uppercase tracking-widest"></p>
-                <div class="w-32 h-px bg-gold/20 mx-auto mt-12"></div>
+    <!-- UI PRINCIPAL -->
+    <div id="main-ui" class="hidden opacity-0 flex transition-opacity duration-1000 min-h-screen">
+        <main class="w-full p-8 md:p-24 max-w-7xl mx-auto">
+            <header class="mb-20 text-center">
+                <h1 class="cinzel text-white text-4xl md:text-6xl tracking-widest font-bold mb-4">NEXUS FINALIS</h1>
+                <p id="user-display" class="cinzel text-[10px] text-gold/60 tracking-[0.5em] uppercase"></p>
+                <div class="w-32 h-[1px] bg-gold/20 mx-auto mt-8"></div>
             </header>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                <div class="glass-card p-12">
-                    <h3 class="cinzel text-gold mb-4">ESTADO DEL NEXO</h3>
-                    <p class="spectral text-sm italic text-gray-400">Protección de entorno activa y cifrada.</p>
+            <div id="content-grid" class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="glass-card p-10 text-center">
+                    <h3 class="cinzel text-gold mb-4 tracking-widest">SISTEMA ACTIVO</h3>
+                    <p class="spectral text-gray-500 text-sm italic">Bienvenido al Archivum Arcano.</p>
                 </div>
             </div>
 
-            <footer class="mt-40">
-                <button onclick="handleSignOut()" class="text-crimson/50 hover:text-crimson cinzel text-[10px] tracking-widest transition-all">DESCONECTAR</button>
+            <footer class="mt-40 text-center">
+                <button onclick="handleSignOut()" class="text-crimson/50 hover:text-crimson cinzel text-[10px] tracking-widest transition-all">TERMINAR SESIÓN</button>
             </footer>
         </main>
     </div>
 
+    <!-- FIREBASE LOGIC -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { 
+            getAuth, 
+            onAuthStateChanged, 
+            signInWithEmailAndPassword, 
+            createUserWithEmailAndPassword, 
+            signInWithRedirect, 
+            getRedirectResult,
+            GoogleAuthProvider, 
+            signOut 
+        } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
         import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-        // INYECCIÓN DE VARIABLES VÍA VITE (VERCEL)
+        // Configuración mediante variables de entorno de Vite
         const firebaseConfig = {
             apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
             authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
@@ -148,6 +171,14 @@
         const db = getFirestore(app);
         const googleProvider = new GoogleAuthProvider();
 
+        // Manejar el resultado del redireccionamiento de Google al cargar la página
+        getRedirectResult(auth).catch((error) => {
+            console.error("Error de autenticación:", error);
+            const errEl = document.getElementById('auth-error');
+            errEl.innerText = "ERROR EN EL PORTAL DE GOOGLE";
+            errEl.style.opacity = 1;
+        });
+
         onAuthStateChanged(auth, async (user) => {
             const loader = document.getElementById('loading-screen');
             const authLayer = document.getElementById('layer-auth');
@@ -155,11 +186,22 @@
 
             if (user) {
                 document.getElementById('user-display').innerText = "Investigador: " + user.email;
-                const userRef = doc(db, "investigadores", user.uid);
-                const docSnap = await getDoc(userRef);
-                if (!docSnap.exists()) {
-                    await setDoc(userRef, { email: user.email, lastLogin: new Date() });
+                
+                // Registro inicial en Firestore
+                try {
+                    const userRef = doc(db, "investigadores", user.uid);
+                    const docSnap = await getDoc(userRef);
+                    if (!docSnap.exists()) {
+                        await setDoc(userRef, { 
+                            email: user.email, 
+                            lastLogin: new Date(),
+                            progress: {} 
+                        });
+                    }
+                } catch (e) {
+                    console.error("Error de Firestore:", e);
                 }
+
                 loader.classList.add('hidden');
                 authLayer.classList.add('hidden');
                 mainUI.classList.remove('hidden');
@@ -180,13 +222,19 @@
                 if (type === 'login') await signInWithEmailAndPassword(auth, email, pass);
                 else await createUserWithEmailAndPassword(auth, email, pass);
             } catch (e) {
-                errEl.innerText = "ACCESO DENEGADO";
+                errEl.innerText = "LLAVE O FIRMA INVÁLIDA";
                 errEl.style.opacity = 1;
+                setTimeout(() => errEl.style.opacity = 0, 3000);
             }
         };
 
         window.handleGoogleSignIn = async () => {
-            try { await signInWithPopup(auth, googleProvider); } catch (e) { console.error(e); }
+            try { 
+                // Usar Redirect es más seguro y compatible que Popup
+                await signInWithRedirect(auth, googleProvider); 
+            } catch (e) { 
+                console.error(e); 
+            }
         };
 
         window.handleSignOut = () => signOut(auth).then(() => location.reload());
