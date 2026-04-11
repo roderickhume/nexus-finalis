@@ -3,12 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Archivum Arcano: Nexus Protegido</title>
+    <title>Archivum Arcano: Nexus Finalis</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Inter:wght@300;400;600&family=Spectral:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
     <style>
         :root {
             --gold: #c5a059;
+            --gold-bright: #f0d7a7;
+            --crimson: #8b0000;
             --bg-deep: #050507;
         }
 
@@ -19,7 +21,10 @@
             color: #d1d1d6;
             font-family: 'Inter', sans-serif;
             margin: 0;
-            background-image: radial-gradient(circle at 50% 50%, rgba(197, 160, 89, 0.05) 0%, transparent 80%);
+            overflow-x: hidden;
+            background-image: 
+                radial-gradient(circle at 50% 50%, rgba(197, 160, 89, 0.05) 0%, transparent 80%),
+                url("https://www.transparenttextures.com/patterns/black-paper.png");
         }
 
         .cinzel { font-family: 'Cinzel', serif; }
@@ -34,21 +39,24 @@
             align-items: center;
             padding: 2rem;
             background: var(--bg-deep);
+            transition: all 1s cubic-bezier(0.7, 0, 0.3, 1);
             z-index: 1000;
-            transition: all 0.8s ease;
         }
-        .layer.hidden { opacity: 0; pointer-events: none; transform: scale(1.05); }
+        .layer.hidden { opacity: 0; pointer-events: none; filter: blur(20px); transform: scale(1.1); }
 
         .arcane-input {
             background: rgba(255, 255, 255, 0.02);
             border: 1px solid rgba(197, 160, 89, 0.2);
             color: white;
             padding: 14px;
+            font-family: 'Spectral', serif;
             width: 100%;
             margin-bottom: 1rem;
             text-align: center;
             border-radius: 4px;
+            transition: 0.3s;
         }
+        .arcane-input:focus { border-color: var(--gold); background: rgba(197, 160, 89, 0.05); }
 
         .arcane-btn {
             border: 1px solid var(--gold);
@@ -62,92 +70,126 @@
             text-transform: uppercase;
             font-size: 0.75rem;
         }
-        .arcane-btn:hover { background: var(--gold); color: black; }
+        .arcane-btn:hover { background: var(--gold); color: black; box-shadow: 0 0 30px rgba(197, 160, 89, 0.4); }
+
+        .glass-card {
+            background: rgba(15, 15, 20, 0.6);
+            border: 1px solid rgba(197, 160, 89, 0.1);
+            backdrop-filter: blur(10px);
+            transition: 0.4s;
+        }
+        .glass-card:hover { border-color: var(--gold); transform: translateY(-5px); }
 
         .spinner { border: 2px solid rgba(197, 160, 89, 0.1); border-top: 2px solid var(--gold); border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     </style>
 </head>
-<body>
+<body oncontextmenu="return false;">
 
     <div id="loading-screen" class="layer">
         <div class="spinner mb-4"></div>
-        <p class="cinzel text-[10px] text-gold tracking-widest uppercase">Cifrando Conexión...</p>
+        <p class="cinzel text-[10px] text-gold tracking-widest uppercase">Invocando Entorno Seguro...</p>
     </div>
 
     <section id="layer-auth" class="layer hidden">
         <div class="max-w-md w-full text-center px-6">
-            <h2 class="cinzel text-gold text-2xl mb-10 tracking-[0.5em]">ACCESO PROTEGIDO</h2>
+            <h2 class="cinzel text-gold text-2xl mb-10 tracking-[0.5em]">REGISTRO DE INICIADO</h2>
             <div id="auth-forms" class="space-y-4">
-                <input type="email" id="auth-email" placeholder="Email" class="arcane-input">
-                <input type="password" id="auth-pass" placeholder="Password" class="arcane-input">
-                <button onclick="handleAuthAction('login')" class="arcane-btn w-full">Validar</button>
-                <button onclick="handleAuthAction('register')" class="text-[9px] cinzel text-gold/40 hover:text-gold block mx-auto">Registrar Nueva Firma</button>
+                <input type="email" id="auth-email" placeholder="Firma de Correo" class="arcane-input">
+                <input type="password" id="auth-pass" placeholder="Llave de Paso" class="arcane-input">
+                <div class="flex flex-col space-y-4 pt-4">
+                    <button onclick="handleAuthAction('login')" class="arcane-btn">Abrir el Nexo</button>
+                    <button onclick="handleAuthAction('register')" class="text-[9px] cinzel text-gold/40 hover:text-gold tracking-[0.3em]">Nueva Inscripción</button>
+                    <button onclick="handleGoogleSignIn()" class="text-[10px] cinzel text-white/50 hover:text-white border border-white/10 p-4 hover:bg-white/5 transition-all">GOOGLE LOGIN</button>
+                </div>
             </div>
-            <p id="auth-error" class="text-red-900 text-[10px] cinzel mt-8 opacity-0"></p>
+            <p id="auth-error" class="text-crimson text-[10px] cinzel mt-8 opacity-0 uppercase"></p>
         </div>
     </section>
 
-    <div id="main-ui" class="hidden p-20 text-center">
-        <h1 class="cinzel text-white text-4xl mb-10">SISTEMA ACTIVO</h1>
-        <p class="spectral text-gold/60 italic">La configuración se ha cargado desde el entorno seguro.</p>
-        <button onclick="handleSignOut()" class="arcane-btn mt-20">Cerrar Sesión</button>
+    <div id="main-ui" class="hidden opacity-0 min-h-screen transition-opacity duration-1000">
+        <main class="p-8 md:p-24 max-w-7xl mx-auto text-center">
+            <header class="mb-20">
+                <h1 class="cinzel text-white text-5xl md:text-7xl tracking-[0.3em] font-bold">NEXUS FINALIS</h1>
+                <p id="user-display" class="cinzel text-[10px] text-gold/60 mt-4 uppercase tracking-widest"></p>
+                <div class="w-32 h-px bg-gold/20 mx-auto mt-12"></div>
+            </header>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div class="glass-card p-12">
+                    <h3 class="cinzel text-gold mb-4">ESTADO DEL NEXO</h3>
+                    <p class="spectral text-sm italic text-gray-400">Protección de entorno activa y cifrada.</p>
+                </div>
+            </div>
+
+            <footer class="mt-40">
+                <button onclick="handleSignOut()" class="text-crimson/50 hover:text-crimson cinzel text-[10px] tracking-widest transition-all">DESCONECTAR</button>
+            </footer>
+        </main>
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-        import { getFirestore } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-        /**
-         * SEGURIDAD: Intentamos leer las variables desde el objeto 'process.env' 
-         * que inyectan los entornos de construcción modernos, o buscamos 
-         * atributos de datos si decides usar un script de pre-construcción.
-         */
+        // INYECCIÓN DE VARIABLES VÍA VITE (VERCEL)
         const firebaseConfig = {
-            apiKey: window.FIREBASE_API_KEY || "",
-            authDomain: window.FIREBASE_AUTH_DOMAIN || "",
-            projectId: window.FIREBASE_PROJECT_ID || "",
-            storageBucket: window.FIREBASE_STORAGE_BUCKET || "",
-            messagingSenderId: window.FIREBASE_MESSAGING_SENDER_ID || "",
-            appId: window.FIREBASE_APP_ID || ""
+            apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+            authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+            projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+            storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+            messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+            appId: import.meta.env.VITE_FIREBASE_APP_ID
         };
-
-        // Si las variables están vacías (desarrollo local), intentamos cargarlas de un prompt
-        // o puedes hardcodearlas solo en tu máquina local (sin subir el cambio a git)
-        if (!firebaseConfig.apiKey) {
-            console.warn("Nexus: Esperando variables de entorno seguras...");
-        }
 
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
+        const googleProvider = new GoogleAuthProvider();
 
-        onAuthStateChanged(auth, (user) => {
-            document.getElementById('loading-screen').classList.add('hidden');
+        onAuthStateChanged(auth, async (user) => {
+            const loader = document.getElementById('loading-screen');
+            const authLayer = document.getElementById('layer-auth');
+            const mainUI = document.getElementById('main-ui');
+
             if (user) {
-                document.getElementById('layer-auth').classList.add('hidden');
-                document.getElementById('main-ui').classList.remove('hidden');
+                document.getElementById('user-display').innerText = "Investigador: " + user.email;
+                const userRef = doc(db, "investigadores", user.uid);
+                const docSnap = await getDoc(userRef);
+                if (!docSnap.exists()) {
+                    await setDoc(userRef, { email: user.email, lastLogin: new Date() });
+                }
+                loader.classList.add('hidden');
+                authLayer.classList.add('hidden');
+                mainUI.classList.remove('hidden');
+                setTimeout(() => mainUI.style.opacity = 1, 100);
             } else {
-                document.getElementById('layer-auth').classList.remove('hidden');
-                document.getElementById('main-ui').classList.add('hidden');
+                loader.classList.add('hidden');
+                authLayer.classList.remove('hidden');
+                mainUI.classList.add('hidden');
+                mainUI.style.opacity = 0;
             }
         });
 
         window.handleAuthAction = async (type) => {
             const email = document.getElementById('auth-email').value;
             const pass = document.getElementById('auth-pass').value;
+            const errEl = document.getElementById('auth-error');
             try {
                 if (type === 'login') await signInWithEmailAndPassword(auth, email, pass);
                 else await createUserWithEmailAndPassword(auth, email, pass);
             } catch (e) {
-                const err = document.getElementById('auth-error');
-                err.innerText = "ERROR DE VALIDACIÓN";
-                err.style.opacity = 1;
+                errEl.innerText = "ACCESO DENEGADO";
+                errEl.style.opacity = 1;
             }
         };
 
-        window.handleSignOut = () => signOut(auth);
+        window.handleGoogleSignIn = async () => {
+            try { await signInWithPopup(auth, googleProvider); } catch (e) { console.error(e); }
+        };
+
+        window.handleSignOut = () => signOut(auth).then(() => location.reload());
     </script>
 </body>
 </html>
