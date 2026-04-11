@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Archivum Arcano: Nexus Protegido</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Inter:wght@300;400;600&family=Spectral:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --gold: #c5a059;
+            --bg-deep: #050507;
+        }
+
+        * { -webkit-user-select: none; -moz-user-select: none; user-select: none; outline: none; }
+
+        body {
+            background-color: var(--bg-deep);
+            color: #d1d1d6;
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            background-image: radial-gradient(circle at 50% 50%, rgba(197, 160, 89, 0.05) 0%, transparent 80%);
+        }
+
+        .cinzel { font-family: 'Cinzel', serif; }
+        .spectral { font-family: 'Spectral', serif; }
+
+        .layer {
+            position: fixed;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem;
+            background: var(--bg-deep);
+            z-index: 1000;
+            transition: all 0.8s ease;
+        }
+        .layer.hidden { opacity: 0; pointer-events: none; transform: scale(1.05); }
+
+        .arcane-input {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(197, 160, 89, 0.2);
+            color: white;
+            padding: 14px;
+            width: 100%;
+            margin-bottom: 1rem;
+            text-align: center;
+            border-radius: 4px;
+        }
+
+        .arcane-btn {
+            border: 1px solid var(--gold);
+            color: var(--gold);
+            padding: 16px 40px;
+            font-family: 'Cinzel', serif;
+            letter-spacing: 4px;
+            background: rgba(197, 160, 89, 0.02);
+            cursor: pointer;
+            transition: 0.4s;
+            text-transform: uppercase;
+            font-size: 0.75rem;
+        }
+        .arcane-btn:hover { background: var(--gold); color: black; }
+
+        .spinner { border: 2px solid rgba(197, 160, 89, 0.1); border-top: 2px solid var(--gold); border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    </style>
+</head>
+<body>
+
+    <div id="loading-screen" class="layer">
+        <div class="spinner mb-4"></div>
+        <p class="cinzel text-[10px] text-gold tracking-widest uppercase">Cifrando Conexión...</p>
+    </div>
+
+    <section id="layer-auth" class="layer hidden">
+        <div class="max-w-md w-full text-center px-6">
+            <h2 class="cinzel text-gold text-2xl mb-10 tracking-[0.5em]">ACCESO PROTEGIDO</h2>
+            <div id="auth-forms" class="space-y-4">
+                <input type="email" id="auth-email" placeholder="Email" class="arcane-input">
+                <input type="password" id="auth-pass" placeholder="Password" class="arcane-input">
+                <button onclick="handleAuthAction('login')" class="arcane-btn w-full">Validar</button>
+                <button onclick="handleAuthAction('register')" class="text-[9px] cinzel text-gold/40 hover:text-gold block mx-auto">Registrar Nueva Firma</button>
+            </div>
+            <p id="auth-error" class="text-red-900 text-[10px] cinzel mt-8 opacity-0"></p>
+        </div>
+    </section>
+
+    <div id="main-ui" class="hidden p-20 text-center">
+        <h1 class="cinzel text-white text-4xl mb-10">SISTEMA ACTIVO</h1>
+        <p class="spectral text-gold/60 italic">La configuración se ha cargado desde el entorno seguro.</p>
+        <button onclick="handleSignOut()" class="arcane-btn mt-20">Cerrar Sesión</button>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { getFirestore } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        /**
+         * SEGURIDAD: Intentamos leer las variables desde el objeto 'process.env' 
+         * que inyectan los entornos de construcción modernos, o buscamos 
+         * atributos de datos si decides usar un script de pre-construcción.
+         */
+        const firebaseConfig = {
+            apiKey: window.FIREBASE_API_KEY || "",
+            authDomain: window.FIREBASE_AUTH_DOMAIN || "",
+            projectId: window.FIREBASE_PROJECT_ID || "",
+            storageBucket: window.FIREBASE_STORAGE_BUCKET || "",
+            messagingSenderId: window.FIREBASE_MESSAGING_SENDER_ID || "",
+            appId: window.FIREBASE_APP_ID || ""
+        };
+
+        // Si las variables están vacías (desarrollo local), intentamos cargarlas de un prompt
+        // o puedes hardcodearlas solo en tu máquina local (sin subir el cambio a git)
+        if (!firebaseConfig.apiKey) {
+            console.warn("Nexus: Esperando variables de entorno seguras...");
+        }
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        onAuthStateChanged(auth, (user) => {
+            document.getElementById('loading-screen').classList.add('hidden');
+            if (user) {
+                document.getElementById('layer-auth').classList.add('hidden');
+                document.getElementById('main-ui').classList.remove('hidden');
+            } else {
+                document.getElementById('layer-auth').classList.remove('hidden');
+                document.getElementById('main-ui').classList.add('hidden');
+            }
+        });
+
+        window.handleAuthAction = async (type) => {
+            const email = document.getElementById('auth-email').value;
+            const pass = document.getElementById('auth-pass').value;
+            try {
+                if (type === 'login') await signInWithEmailAndPassword(auth, email, pass);
+                else await createUserWithEmailAndPassword(auth, email, pass);
+            } catch (e) {
+                const err = document.getElementById('auth-error');
+                err.innerText = "ERROR DE VALIDACIÓN";
+                err.style.opacity = 1;
+            }
+        };
+
+        window.handleSignOut = () => signOut(auth);
+    </script>
+</body>
+</html>
