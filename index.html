@@ -5,239 +5,175 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Archivum Arcano: Nexus Finalis</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Inter:wght@300;400;600&family=Spectral:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --gold: #c5a059;
-            --gold-bright: #f0d7a7;
-            --crimson: #8b0000;
-            --bg-deep: #050507;
-        }
-
-        /* Deshabilitar selección para mayor inmersión */
-        * { -webkit-user-select: none; -moz-user-select: none; user-select: none; outline: none; }
-
+        :root { --gold: #c5a059; --bg-deep: #050507; }
+        * { -webkit-user-select: none; user-select: none; outline: none; }
         body {
             background-color: var(--bg-deep);
             color: #d1d1d6;
             font-family: 'Inter', sans-serif;
             margin: 0;
-            overflow-x: hidden;
-            background-image: 
-                radial-gradient(circle at 50% 50%, rgba(197, 160, 89, 0.05) 0%, transparent 80%),
-                url("https://www.transparenttextures.com/patterns/black-paper.png");
+            background-image: radial-gradient(circle at 50% 50%, rgba(197, 160, 89, 0.05) 0%, transparent 80%);
+            min-height: 100vh;
         }
-
         .cinzel { font-family: 'Cinzel', serif; }
-        .spectral { font-family: 'Spectral', serif; }
-
         .layer {
-            position: fixed;
-            inset: 0;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            padding: 2rem;
+            position: fixed; inset: 0;
+            display: flex; flex-direction: column;
+            justify-content: center; align-items: center;
             background: var(--bg-deep);
-            transition: all 0.8s cubic-bezier(0.7, 0, 0.3, 1);
             z-index: 1000;
+            transition: opacity 0.8s ease, transform 0.8s ease;
         }
-        .layer.hidden { opacity: 0; pointer-events: none; filter: blur(15px); transform: scale(1.05); }
-
-        .arcane-input {
-            background: rgba(255, 255, 255, 0.02);
-            border: 1px solid rgba(197, 160, 89, 0.2);
-            color: white;
-            padding: 14px;
-            font-family: 'Spectral', serif;
-            width: 100%;
-            margin-bottom: 1rem;
-            text-align: center;
-            border-radius: 4px;
-            transition: 0.3s;
-        }
-        .arcane-input:focus { border-color: var(--gold); background: rgba(197, 160, 89, 0.05); }
-
+        .layer.hidden { opacity: 0; pointer-events: none; transform: scale(1.05); }
         .arcane-btn {
             border: 1px solid var(--gold);
             color: var(--gold);
-            padding: 16px 40px;
+            padding: 12px 30px;
             font-family: 'Cinzel', serif;
-            letter-spacing: 4px;
-            background: rgba(197, 160, 89, 0.02);
+            letter-spacing: 3px;
+            background: rgba(197, 160, 89, 0.05);
             cursor: pointer;
-            transition: 0.4s;
+            transition: 0.3s;
             text-transform: uppercase;
-            font-size: 0.75rem;
+            font-size: 0.8rem;
+            border-radius: 2px;
         }
-        .arcane-btn:hover { background: var(--gold); color: black; box-shadow: 0 0 30px rgba(197, 160, 89, 0.3); }
-
-        .glass-card {
-            background: rgba(15, 15, 20, 0.6);
-            border: 1px solid rgba(197, 160, 89, 0.1);
-            backdrop-filter: blur(10px);
-            transition: 0.4s;
-        }
-
-        .spinner { border: 2px solid rgba(197, 160, 89, 0.1); border-top: 2px solid var(--gold); border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .arcane-btn:hover:not(:disabled) { background: var(--gold); color: black; box-shadow: 0 0 20px rgba(197, 160, 89, 0.3); }
+        .arcane-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+        .error-msg { color: #ff4444; font-size: 10px; font-family: 'Cinzel', serif; margin-top: 20px; text-transform: uppercase; letter-spacing: 1px; }
     </style>
 </head>
-<body oncontextmenu="return false;">
+<body>
 
-    <!-- PANTALLA DE CARGA -->
+    <!-- Capa de Carga y Errores Críticos -->
     <div id="loading-screen" class="layer">
-        <div class="spinner mb-4"></div>
-        <p class="cinzel text-[10px] text-gold tracking-widest uppercase">Estableciendo Conexión Arcana...</p>
+        <div id="loader-spinner" class="w-12 h-12 border-2 border-gold/10 border-t-gold rounded-full animate-spin mb-6"></div>
+        <p id="loader-text" class="cinzel text-[10px] text-gold tracking-[0.4em] uppercase">Sincronizando Frecuencia...</p>
+        <div id="setup-error" class="error-msg hidden px-10 text-center"></div>
     </div>
 
-    <!-- CAPA DE AUTENTICACIÓN -->
+    <!-- Interfaz de Autenticación -->
     <section id="layer-auth" class="layer hidden">
         <div class="max-w-md w-full text-center px-6">
-            <h2 class="cinzel text-gold text-2xl mb-2 tracking-[0.5em]">REGISTRO DE INICIADO</h2>
-            <p class="spectral italic text-gray-600 mb-10 text-sm">"Toda voluntad debe ser reconocida"</p>
+            <h2 class="cinzel text-gold text-3xl mb-2 tracking-[0.6em]">NEXUS</h2>
+            <p class="spectral italic text-gray-600 mb-16 text-xs uppercase tracking-widest">Identificación de Iniciado</p>
             
-            <div id="auth-forms" class="space-y-4">
-                <input type="email" id="auth-email" placeholder="Correo Electrónico" class="arcane-input">
-                <input type="password" id="auth-pass" placeholder="Palabra de Poder" class="arcane-input">
-                
-                <div class="flex flex-col space-y-4 pt-4">
-                    <button onclick="handleAuthAction('login')" class="arcane-btn">Entrar al Nexo</button>
-                    <button onclick="handleAuthAction('register')" class="text-[9px] cinzel text-gold/40 hover:text-gold tracking-[0.3em]">Nueva Inscripción</button>
-                    <div class="flex items-center py-4">
-                        <div class="h-px bg-gold/10 flex-1"></div>
-                        <span class="cinzel text-[8px] mx-4 text-gold/30">O</span>
-                        <div class="h-px bg-gold/10 flex-1"></div>
-                    </div>
-                    <button onclick="handleGoogleSignIn()" class="text-[10px] cinzel text-white/50 hover:text-white flex items-center justify-center space-x-3 border border-white/10 p-4 hover:bg-white/5 transition-all">
-                        <span>ACCEDER CON GOOGLE</span>
-                    </button>
-                </div>
-            </div>
-            <p id="auth-error" class="text-red-900 text-[10px] cinzel mt-8 opacity-0 transition-opacity uppercase tracking-widest"></p>
+            <button id="google-btn" onclick="handleGoogleSignIn()" class="arcane-btn w-full mb-6">
+                Acceder con Google
+            </button>
+            
+            <p id="auth-status" class="text-[9px] cinzel text-white/30 uppercase tracking-[0.2em]"></p>
         </div>
     </section>
 
-    <!-- UI PRINCIPAL -->
-    <div id="main-ui" class="hidden opacity-0 flex transition-opacity duration-1000 min-h-screen">
-        <main class="w-full p-8 md:p-24 max-w-7xl mx-auto">
-            <header class="mb-20 text-center">
-                <h1 class="cinzel text-white text-4xl md:text-6xl tracking-widest font-bold mb-4">NEXUS FINALIS</h1>
-                <p id="user-display" class="cinzel text-[10px] text-gold/60 tracking-[0.5em] uppercase"></p>
-                <div class="w-32 h-[1px] bg-gold/20 mx-auto mt-8"></div>
-            </header>
+    <!-- UI Principal Post-Login -->
+    <div id="main-ui" class="hidden opacity-0 transition-opacity duration-1000 p-10 md:p-32 text-center">
+        <header class="mb-20">
+            <h1 class="cinzel text-white text-4xl md:text-6xl tracking-[0.4em] font-bold">ACCESO CONCEDIDO</h1>
+            <div class="w-20 h-px bg-gold/30 mx-auto my-8"></div>
+            <p id="user-info" class="cinzel text-[10px] text-gold tracking-widest uppercase"></p>
+        </header>
+        
+        <div class="max-w-xl mx-auto glass-card border border-gold/10 p-10 bg-white/5 backdrop-blur-md">
+            <p class="spectral italic text-gray-400">"El conocimiento es la única llave que no pesa."</p>
+        </div>
 
-            <div id="content-grid" class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                <div class="glass-card p-10 text-center">
-                    <h3 class="cinzel text-gold mb-4 tracking-widest">SISTEMA ACTIVO</h3>
-                    <p class="spectral text-gray-500 text-sm italic">Bienvenido al Archivum Arcano.</p>
-                </div>
-            </div>
-
-            <footer class="mt-40 text-center">
-                <button onclick="handleSignOut()" class="text-crimson/50 hover:text-crimson cinzel text-[10px] tracking-widest transition-all">TERMINAR SESIÓN</button>
-            </footer>
-        </main>
+        <button onclick="handleSignOut()" class="mt-32 text-red-900/50 hover:text-red-600 cinzel text-[10px] tracking-widest uppercase transition-colors">
+            Cerrar Conexión
+        </button>
     </div>
 
-    <!-- FIREBASE LOGIC -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { 
             getAuth, 
             onAuthStateChanged, 
-            signInWithEmailAndPassword, 
-            createUserWithEmailAndPassword, 
             signInWithRedirect, 
-            getRedirectResult,
+            getRedirectResult, 
             GoogleAuthProvider, 
             signOut 
         } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-        import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-        // Configuración mediante variables de entorno de Vite
-        const firebaseConfig = {
-            apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
-            authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
-            projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
-            storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
-            messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
-            appId: import.meta.env.VITE_FIREBASE_APP_ID
-        };
-
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
-        const googleProvider = new GoogleAuthProvider();
-
-        // Manejar el resultado del redireccionamiento de Google al cargar la página
-        getRedirectResult(auth).catch((error) => {
-            console.error("Error de autenticación:", error);
-            const errEl = document.getElementById('auth-error');
-            errEl.innerText = "ERROR EN EL PORTAL DE GOOGLE";
-            errEl.style.opacity = 1;
-        });
-
-        onAuthStateChanged(auth, async (user) => {
-            const loader = document.getElementById('loading-screen');
-            const authLayer = document.getElementById('layer-auth');
-            const mainUI = document.getElementById('main-ui');
-
-            if (user) {
-                document.getElementById('user-display').innerText = "Investigador: " + user.email;
-                
-                // Registro inicial en Firestore
-                try {
-                    const userRef = doc(db, "investigadores", user.uid);
-                    const docSnap = await getDoc(userRef);
-                    if (!docSnap.exists()) {
-                        await setDoc(userRef, { 
-                            email: user.email, 
-                            lastLogin: new Date(),
-                            progress: {} 
-                        });
-                    }
-                } catch (e) {
-                    console.error("Error de Firestore:", e);
-                }
-
-                loader.classList.add('hidden');
-                authLayer.classList.add('hidden');
-                mainUI.classList.remove('hidden');
-                setTimeout(() => mainUI.style.opacity = 1, 100);
-            } else {
-                loader.classList.add('hidden');
-                authLayer.classList.remove('hidden');
-                mainUI.classList.add('hidden');
-                mainUI.style.opacity = 0;
-            }
-        });
-
-        window.handleAuthAction = async (type) => {
-            const email = document.getElementById('auth-email').value;
-            const pass = document.getElementById('auth-pass').value;
-            const errEl = document.getElementById('auth-error');
+        // Función para obtener variables con seguridad
+        const getEnv = (key) => {
             try {
-                if (type === 'login') await signInWithEmailAndPassword(auth, email, pass);
-                else await createUserWithEmailAndPassword(auth, email, pass);
+                return import.meta.env[key] || null;
             } catch (e) {
-                errEl.innerText = "LLAVE O FIRMA INVÁLIDA";
-                errEl.style.opacity = 1;
-                setTimeout(() => errEl.style.opacity = 0, 3000);
+                return null;
             }
         };
 
-        window.handleGoogleSignIn = async () => {
-            try { 
-                // Usar Redirect es más seguro y compatible que Popup
-                await signInWithRedirect(auth, googleProvider); 
-            } catch (e) { 
-                console.error(e); 
-            }
+        const config = {
+            apiKey: getEnv('VITE_FIREBASE_API_KEY'),
+            authDomain: getEnv('VITE_FIREBASE_AUTH_DOMAIN'),
+            projectId: getEnv('VITE_FIREBASE_PROJECT_ID'),
+            storageBucket: getEnv('VITE_FIREBASE_STORAGE_BUCKET'),
+            messagingSenderId: getEnv('VITE_FIREBASE_MESSAGING_SENDER_ID'),
+            appId: getEnv('VITE_FIREBASE_APP_ID')
         };
 
-        window.handleSignOut = () => signOut(auth).then(() => location.reload());
+        const setupErrorEl = document.getElementById('setup-error');
+        const loaderText = document.getElementById('loader-text');
+
+        // Verificación de integridad de variables
+        const missingKeys = Object.keys(config).filter(k => !config[k]);
+        
+        if (missingKeys.length > 0) {
+            document.getElementById('loader-spinner').style.display = 'none';
+            loaderText.innerText = "FALLO DE CONFIGURACIÓN";
+            setupErrorEl.innerHTML = `Variables faltantes o mal configuradas en Vercel:<br><span class="text-white mt-2 block">${missingKeys.join(', ')}</span><br><br>Asegúrate de que tengan el prefijo VITE_`;
+            setupErrorEl.classList.remove('hidden');
+        } else {
+            // Inicializar Firebase solo si la config está completa
+            try {
+                const app = initializeApp(config);
+                const auth = getAuth(app);
+                const googleProvider = new GoogleAuthProvider();
+
+                // Manejo de redirección
+                getRedirectResult(auth).then(() => {
+                    console.log("Redirección completada");
+                }).catch((error) => {
+                    console.error("Error Auth:", error);
+                    const status = document.getElementById('auth-status');
+                    status.innerText = "Error: Dominio no autorizado o problema de red.";
+                });
+
+                // Observador de estado
+                onAuthStateChanged(auth, (user) => {
+                    document.getElementById('loading-screen').classList.add('hidden');
+                    if (user) {
+                        document.getElementById('layer-auth').classList.add('hidden');
+                        document.getElementById('main-ui').classList.remove('hidden');
+                        setTimeout(() => document.getElementById('main-ui').classList.add('opacity-100'), 50);
+                        document.getElementById('user-info').innerText = "IDENTIDAD: " + user.email;
+                    } else {
+                        document.getElementById('layer-auth').classList.remove('hidden');
+                        document.getElementById('main-ui').classList.add('hidden');
+                    }
+                });
+
+                window.handleGoogleSignIn = () => {
+                    document.getElementById('google-btn').disabled = true;
+                    document.getElementById('auth-status').innerText = "REDIRECCIONANDO...";
+                    signInWithRedirect(auth, googleProvider);
+                };
+
+                window.handleSignOut = () => {
+                    signOut(auth).then(() => {
+                        window.location.reload();
+                    });
+                };
+
+            } catch (err) {
+                console.error("Firebase Init Error:", err);
+                loaderText.innerText = "ERROR DE INICIALIZACIÓN";
+                setupErrorEl.innerText = err.message;
+                setupErrorEl.classList.remove('hidden');
+            }
+        }
     </script>
 </body>
 </html>
