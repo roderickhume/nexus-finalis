@@ -3,411 +3,330 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Archivum Arcano: Nexus Finalis</title>
+    <title>Archivum Arcano • Abramelín</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Inter:wght@300;400;600&family=Space+Grotesk:wght@300;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Inter:wght@300;400;600&family=Spectral:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
     <style>
         :root {
             --gold: #c5a059;
-            --gold-muted: rgba(197, 160, 89, 0.2);
             --bg-deep: #050507;
-            --bg-card: #0a0a0f;
         }
-
-        * { 
-            scrollbar-width: thin; 
-            scrollbar-color: var(--gold) transparent; 
-        }
-        
-        ::-webkit-scrollbar { width: 4px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: var(--gold); border-radius: 10px; }
-
+        * { user-select: none; }
         body {
             background-color: var(--bg-deep);
             color: #d1d1d6;
-            font-family: 'Space Grotesk', sans-serif;
-            margin: 0;
-            overflow: hidden;
-            height: 100vh;
+            font-family: 'Inter', sans-serif;
+            background-image: radial-gradient(circle at 50% 50%, rgba(197, 160, 89, 0.06) 0%, transparent 80%),
+                              url("https://www.transparenttextures.com/patterns/black-paper.png");
         }
-
         .cinzel { font-family: 'Cinzel', serif; }
-        
-        .animate-fade-in { animation: fadeIn 0.6s ease-out forwards; }
-        @keyframes fadeIn { 
-            from { opacity: 0; transform: translateY(10px); } 
-            to { opacity: 1; transform: translateY(0); } 
+        .spectral { font-family: 'Spectral', serif; }
+
+        .glass-card {
+            background: rgba(15, 15, 20, 0.68);
+            border: 1px solid rgba(197, 160, 89, 0.18);
+            backdrop-filter: blur(14px);
         }
 
-        .sidebar {
-            width: 320px;
-            height: 100vh;
-            background: var(--bg-card);
-            border-right: 1px solid rgba(197, 160, 89, 0.1);
-            overflow-y: auto;
-            z-index: 50;
-            flex-shrink: 0;
-        }
-
-        .menu-category {
-            font-size: 10px;
-            letter-spacing: 3px;
-            text-transform: uppercase;
+        .arcane-btn {
+            border: 1px solid var(--gold);
             color: var(--gold);
-            padding: 25px 20px 10px;
-            opacity: 0.6;
-            font-weight: bold;
-        }
-
-        .menu-btn {
-            width: 100%;
-            text-align: left;
-            padding: 12px 20px;
-            font-size: 11px;
-            letter-spacing: 1px;
-            color: #888;
-            transition: 0.3s;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid rgba(197, 160, 89, 0.03);
-        }
-
-        .menu-btn:hover { color: var(--gold); background: rgba(197, 160, 89, 0.03); }
-        .menu-btn.active { color: var(--gold); background: rgba(197, 160, 89, 0.08); font-weight: 600; }
-
-        .submenu {
-            background: rgba(0,0,0,0.2);
-            display: none;
-            flex-direction: column;
-        }
-
-        .submenu.open { display: flex; }
-
-        .submenu-item {
-            padding: 10px 40px;
-            font-size: 10px;
-            color: #666;
+            padding: 16px 48px;
+            font-family: 'Cinzel', serif;
+            letter-spacing: 4px;
+            background: rgba(197, 160, 89, 0.02);
             cursor: pointer;
-            transition: 0.3s;
-            border-left: 2px solid transparent;
+            transition: all 0.4s;
+            text-transform: uppercase;
+        }
+        .arcane-btn:hover {
+            background: var(--gold);
+            color: black;
+            box-shadow: 0 0 35px rgba(197, 160, 89, 0.45);
         }
 
-        .submenu-item:hover { color: var(--gold); background: rgba(197, 160, 89, 0.02); }
-        .submenu-item.selected { color: var(--gold); border-left-color: var(--gold); background: rgba(197, 160, 89, 0.05); }
+        .section-title { font-family: 'Cinzel', serif; color: var(--gold); letter-spacing: 3px; }
 
-        .content-viewer {
-            flex: 1;
-            height: 100vh;
-            overflow-y: auto;
-            padding: 60px;
-            position: relative;
+        .read-check { opacity: 0; transition: all 0.5s; }
+        .section-read .read-check { opacity: 1; color: #c5a059; }
+
+        .menu-item.read { color: #c5a059; }
+        .menu-item.read::after { content: " ✓"; }
+
+        .notification {
+            position: fixed; bottom: 20px; right: 20px;
+            background: rgba(30, 30, 35, 0.95);
+            border-left: 4px solid #c5a059;
+            padding: 14px 20px;
+            border-radius: 6px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+            display: none; z-index: 2000;
+            max-width: 340px;
         }
 
-        .content-container {
-            max-width: 850px;
-            margin: 0 auto;
+        .diary-entry {
+            background: rgba(10, 10, 15, 0.85);
+            border: 1px solid rgba(197, 160, 89, 0.2);
         }
 
-        .data-card {
-            background: rgba(255,255,255,0.02);
-            border: 1px solid rgba(197, 160, 89, 0.1);
-            padding: 30px;
-            margin: 30px 0;
-            border-radius: 4px;
-        }
-
-        .scanline {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 2px;
-            background: rgba(197, 160, 89, 0.03);
-            animation: scan 8s linear infinite;
-            pointer-events: none;
-            z-index: 200;
-        }
-        @keyframes scan { from { top: 0%; } to { top: 100%; } }
-
-        .ornament {
-            height: 1px;
-            background: linear-gradient(90deg, transparent, var(--gold), transparent);
-            margin: 40px 0;
-            opacity: 0.3;
+        .sandbox-warning {
+            background: #3c2f1e; border-left: 4px solid #c5a059;
+            padding: 12px; font-size: 0.8rem;
         }
     </style>
 </head>
-<body>
+<body oncontextmenu="return false;">
 
-    <div class="scanline"></div>
-
-    <div id="loading-screen" class="fixed inset-0 bg-black z-[300] flex flex-col items-center justify-center">
-        <div class="w-12 h-12 border-t-2 border-gold rounded-full animate-spin mb-6"></div>
-        <p class="cinzel text-[9px] text-gold tracking-[0.6em] animate-pulse">RECONSTRUYENDO NEXUS ARCANA</p>
+    <!-- Loading -->
+    <div id="loading-screen" class="fixed inset-0 flex flex-col items-center justify-center bg-[#050507] z-50">
+        <div class="w-12 h-12 border-2 border-[#c5a059]/30 border-t-[#c5a059] rounded-full animate-spin mb-6"></div>
+        <p class="cinzel text-[#c5a059] text-xs tracking-[4px] uppercase">Abriendo el Grimorio...</p>
     </div>
 
-    <div class="flex h-screen">
-        <aside class="sidebar flex flex-col">
-            <div class="p-10 border-b border-gold/10">
-                <h2 class="cinzel text-gold text-2xl font-bold tracking-widest">NEXUS</h2>
-                <p class="text-[8px] opacity-40 uppercase tracking-[4px]">Sincronización Profunda</p>
+    <div class="flex min-h-screen">
+
+        <!-- Menú lateral -->
+        <div class="w-80 bg-black/90 border-r border-[#c5a059]/10 p-8 hidden lg:block fixed h-screen overflow-y-auto">
+            <div class="cinzel text-[#c5a059] text-2xl mb-10 tracking-widest">ABRAMELÍN</div>
+            <nav id="sidebar-menu" class="space-y-5 text-sm"></nav>
+        </div>
+
+        <!-- Contenido -->
+        <div class="flex-1 lg:ml-80 p-6 md:p-12 max-w-4xl mx-auto">
+
+            <header class="text-center mb-16 pt-8">
+                <h1 class="cinzel text-5xl md:text-7xl text-white tracking-[6px] font-bold mb-3">ABRAMELÍN</h1>
+                <p class="spectral italic text-[#c5a059]/80 text-lg tracking-widest">La Sagrada Magia del Santo Ángel Guardián</p>
+            </header>
+
+            <!-- Secciones completas -->
+            <div id="section-intro" class="glass-card p-10 rounded-2xl mb-10 section">
+                <div class="flex justify-between"><h2 class="section-title text-2xl mb-6">Introducción • Liber Primus</h2><span class="read-check text-3xl">✓</span></div>
+                <p class="spectral leading-relaxed">Bienvenido al camino de Abramelín. El objetivo no es el poder mundano, sino lograr la Conversación Sagrada con tu Santo Ángel Guardián.</p>
             </div>
 
-            <nav class="flex-1 pb-10">
-                <div class="menu-category cinzel">Misterios de Worms</div>
-                
-                <div class="menu-group">
-                    <button class="menu-btn" onclick="toggleMenu(this, 'sub-abr-historia')">
-                        <span>LA CRÓNICA</span>
-                        <span>+</span>
-                    </button>
-                    <div id="sub-abr-historia" class="submenu">
-                        <div class="submenu-item" onclick="loadDoc('abr_viaje', event)">El Viaje a Egipto</div>
-                        <div class="submenu-item" onclick="loadDoc('abr_maestros', event)">Falsos Maestros</div>
-                    </div>
-                </div>
-
-                <div class="menu-group">
-                    <button class="menu-btn" onclick="toggleMenu(this, 'sub-abr-ritual')">
-                        <span>LA OPERACIÓN</span>
-                        <span>+</span>
-                    </button>
-                    <div id="sub-abr-ritual" class="submenu">
-                        <div class="submenu-item" onclick="loadDoc('abr_preparacion', event)">La Ascesis (6 Meses)</div>
-                        <div class="submenu-item" onclick="loadDoc('abr_angel', event)">Contacto con el S.A.G.</div>
-                        <div class="submenu-item" onclick="loadDoc('abr_principes', event)">Sometimiento Infernal</div>
-                    </div>
-                </div>
-
-                <div class="menu-category cinzel">Clavículas de Salomón</div>
-
-                <div class="menu-group">
-                    <button class="menu-btn" onclick="toggleMenu(this, 'sub-sal-goetia')">
-                        <span>ARTE GOETIA</span>
-                        <span>+</span>
-                    </button>
-                    <div id="sub-sal-goetia" class="submenu">
-                        <div class="submenu-item" onclick="loadDoc('sal_jerarquia', event)">Jerarquías y Reyes</div>
-                        <div class="submenu-item" onclick="loadDoc('sal_sellos', event)">Sellos de Metales</div>
-                        <div class="submenu-item" onclick="loadDoc('sal_vasija', event)">La Vasija de Bronce</div>
-                    </div>
-                </div>
-
-                <div class="menu-group">
-                    <button class="menu-btn" onclick="toggleMenu(this, 'sub-sal-magia')">
-                        <span>LLAVES MAYORES</span>
-                        <span>+</span>
-                    </button>
-                    <div id="sub-sal-magia" class="submenu">
-                        <div class="submenu-item" onclick="loadDoc('sal_pantaculos', event)">Pantáculos Maestros</div>
-                        <div class="submenu-item" onclick="loadDoc('sal_herramientas', event)">Instrumentos del Arte</div>
-                    </div>
-                </div>
-            </nav>
-            
-            <div class="p-6 border-t border-gold/5 bg-black/40">
-                <div class="flex items-center gap-3">
-                    <div class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
-                    <span class="text-[9px] text-white/40 uppercase tracking-widest">Enlace Estable</span>
-                </div>
+            <div id="section-warning" class="glass-card p-10 rounded-2xl mb-10 section">
+                <div class="flex justify-between"><h2 class="section-title text-2xl mb-6">Advertencia del Maestro</h2><span class="read-check text-3xl">✓</span></div>
+                <div class="sandbox-warning">Esta operación exige disciplina extrema y silencio absoluto durante 6 a 18 meses. No es una práctica para curiosos.</div>
             </div>
-        </aside>
 
-        <main class="content-viewer">
-            <div id="main-content" class="content-container animate-fade-in">
-                <div class="h-[80vh] flex flex-col items-center justify-center text-center">
-                    <div class="w-32 h-[1px] bg-gold/20 mb-10"></div>
-                    <h1 class="cinzel text-5xl text-white font-bold tracking-[0.3em] mb-4">ARCHIVUM</h1>
-                    <p class="cinzel text-gold text-[10px] tracking-[0.8em] opacity-40 uppercase">Seleccione una entrada para desvelar la historia</p>
-                    <div class="w-32 h-[1px] bg-gold/20 mt-10"></div>
-                </div>
+            <div id="section-silence" class="glass-card p-10 rounded-2xl mb-10 section">
+                <div class="flex justify-between"><h2 class="section-title text-2xl mb-6">El Aislamiento de la Palabra</h2><span class="read-check text-3xl">✓</span></div>
+                <p class="spectral italic">"Hablar de la operación es abrir las ventanas en medio de una tormenta de arena."</p>
             </div>
-        </main>
+
+            <div id="section-stages" class="glass-card p-10 rounded-2xl mb-10 section">
+                <div class="flex justify-between"><h2 class="section-title text-2xl mb-6">Las Etapas de la Operación</h2><span class="read-check text-3xl">✓</span></div>
+                <ul class="spectral space-y-3">
+                    <li>Primeros 60 días — Purificación del Horizonte</li>
+                    <li>Días 61-120 — Intensificación de la Devoción</li>
+                    <li>Últimos 60 días — Preparación para la Invocación</li>
+                </ul>
+            </div>
+
+            <div id="section-oratorio" class="glass-card p-10 rounded-2xl mb-10 section">
+                <div class="flex justify-between"><h2 class="section-title text-2xl mb-6">El Oratorio Sagrado</h2><span class="read-check text-3xl">✓</span></div>
+                <p class="spectral">Espacio dedicado, orientado al Este, con altar, lámpara perpetua e incensario. Debe usarse exclusivamente para la operación.</p>
+            </div>
+
+            <div id="section-materials" class="glass-card p-10 rounded-2xl mb-10 section">
+                <div class="flex justify-between"><h2 class="section-title text-2xl mb-6">Materiales y Herramientas</h2><span class="read-check text-3xl">✓</span></div>
+                <ul class="spectral grid grid-cols-2 gap-2 text-sm">
+                    <li>Vestidura blanca de lino</li>
+                    <li>Aceite del Arte</li>
+                    <li>Incensario y resinas</li>
+                    <li>Corona, vara y cíngulo</li>
+                </ul>
+            </div>
+
+            <div id="section-squares" class="glass-card p-10 rounded-2xl mb-10 section">
+                <div class="flex justify-between"><h2 class="section-title text-2xl mb-6">Cuadrados Mágicos (Liber III)</h2><span class="read-check text-3xl">✓</span></div>
+                <p class="spectral">242 cuadrados mágicos que se activan tras la Conversación con el Santo Ángel Guardián.</p>
+            </div>
+
+            <!-- DIARIO FUNCIONAL -->
+            <div id="section-diary" class="glass-card p-10 rounded-2xl mb-10 section">
+                <div class="flex justify-between items-start mb-8">
+                    <h2 class="section-title text-2xl">Diario de Progreso</h2>
+                    <span class="read-check text-3xl">✓</span>
+                </div>
+
+                <textarea id="diary-input" rows="5" class="w-full bg-black/70 border border-[#c5a059]/40 rounded-2xl p-5 spectral focus:border-[#c5a059]" 
+                    placeholder="Registra tu día: oraciones, sensaciones, dificultades, sueños..."></textarea>
+
+                <button onclick="saveDiaryEntry()" class="mt-4 arcane-btn text-sm">GUARDAR ENTRADA</button>
+
+                <div id="diary-entries" class="mt-10 space-y-6"></div>
+            </div>
+
+            <div class="text-center py-12">
+                <button onclick="iniciarCompromiso()" class="arcane-btn">ACEPTAR LOS 7 DÍAS DE PRUEBA</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notificación -->
+    <div id="notification" class="notification">
+        <span id="notif-text" class="text-sm"></span>
     </div>
 
     <script>
-        const DOCS = {
-            abr_viaje: {
-                title: "El Encuentro en el Desierto",
-                subtitle: "Crónica de Abraham, Año 1409",
-                body: `
-                    <p class="text-xl mb-8 leading-relaxed italic">"Había viajado por toda Europa buscando el saber del Rey Salomón, encontrando solo charlatanes. No fue hasta que mis pies tocaron la arena de Egipto que hallé a Abramelín."</p>
-                    <p class="text-lg mb-8 leading-relaxed">Abraham relata cómo este eremita poseía una magia que no dependía de trucos, sino de una estructura divina. Al igual que **Salomón** usó el Sello de Dios para comandar espíritus, Abramelín le enseñó que el secreto reside en la autoridad del propio espíritu sobre la materia.</p>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div class="data-card !m-0 border-gold/30">
-                            <h4 class="cinzel text-gold mb-2 uppercase text-[10px] tracking-widest">EL NEXO</h4>
-                            <p class="text-sm opacity-70">El sistema de Abramelín es la "Llave" práctica para aplicar la teoría de las <strong>Clavículas de Salomón</strong> sin riesgo de locura.</p>
-                        </div>
-                        <div class="data-card !m-0">
-                            <h4 class="cinzel text-gold mb-2 uppercase text-[10px] tracking-widest">CONSEJO</h4>
-                            <p class="text-sm opacity-70">No busques el poder de los 72 espíritus sin antes haber purificado tu intención en el desierto personal.</p>
-                        </div>
-                    </div>
-                `
-            },
-            abr_maestros: {
-                title: "Las Sombras de la Vía",
-                subtitle: "Lección sobre el Engaño",
-                body: `
-                    <p class="text-xl mb-8 leading-relaxed">Abraham advierte: "Vi a muchos que decían poseer la <strong>Vasija de Bronce de Salomón</strong>, pero sus vasijas estaban vacías o contenían solo demonios de su propia creación."</p>
-                    <div class="data-card">
-                        <h4 class="cinzel text-gold mb-4 uppercase text-sm tracking-widest">El Error de los "Iluminados"</h4>
-                        <p class="mb-6 opacity-80 text-lg">Muchos magos de su época intentaban usar los <strong>Sellos de Metales</strong> sin la preparación de los 6 meses. El resultado era siempre el mismo: obsesión, ruina y, a menudo, la muerte por manos de entidades que no sabían desterrar.</p>
-                        <ul class="space-y-4 text-base italic opacity-60">
-                            <li>- "Pactar es de esclavos; mandar es de hombres libres."</li>
-                            <li>- "El oro de Salomón brilla, pero el metal de los falsos maestros se oxida con la primera mentira."</li>
-                        </ul>
-                    </div>
-                `
-            },
-            abr_preparacion: {
-                title: "La Construcción del Templo Interno",
-                subtitle: "Fase de Retiro",
-                body: `
-                    <p class="text-xl mb-8 leading-relaxed">Así como el Templo de Salomón fue construido con medidas precisas, el operador debe reconstruirse durante 6 meses. No es un simple ayuno; es la forja de una herramienta viviente.</p>
-                    <div class="data-card border-l-4 border-gold">
-                        <h4 class="cinzel text-gold mb-4 uppercase text-sm tracking-widest">Similitudes con el Arte de Salomón</h4>
-                        <p class="mb-4">Para usar la <strong>Espada del Arte</strong>, primero hay que ser el filo. Durante este tiempo, el mago se despoja de sus influencias planetarias para quedar en un estado de 'vacío' donde solo quepa la luz del Ángel.</p>
-                        <p class="text-sm opacity-50 uppercase tracking-widest">Mes 1 al 6: Del Plomo de la Tierra al Oro del Espíritu.</p>
-                    </div>
-                `
-            },
-            abr_angel: {
-                title: "La Corona del Sistema",
-                subtitle: "El Santo Ángel Guardián",
-                body: `
-                    <p class="text-xl mb-8 leading-relaxed">Este es el momento en que el mago recibe su 'Nombre Nuevo'. Al igual que **Salomón** recibió su sabiduría directamente de la fuente, el operador de Abramelín obtiene un tutor divino personal.</p>
-                    <div class="ornament"></div>
-                    <p class="text-lg leading-relaxed text-center px-10">"Una vez que el Ángel aparece, los <strong>Pantáculos Maestros</strong> ya no son solo dibujos en papel; se convierten en llaves ardientes que los espíritus no pueden ignorar."</p>
-                `
-            },
-            abr_principes: {
-                title: "El Juicio de las Sombras",
-                subtitle: "Sometimiento de los Cuatro",
-                body: `
-                    <p class="text-xl mb-8 leading-relaxed">Con la autoridad del Ángel, el mago convoca a los Reyes del Abismo. Es una escena que recuerda a la leyenda de **Salomón sentando a los genios en su tribunal**.</p>
-                    <div class="p-8 border border-red-900/40 bg-red-900/10 rounded-lg">
-                        <h5 class="cinzel text-red-400 mb-4 text-center">LA CORTE INFERNAL</h5>
-                        <p class="text-base leading-relaxed opacity-80">No se les llama por curiosidad, sino para que juren sobre los <strong>Instrumentos del Arte</strong> que servirán al mago en su camino. Aquí, el conocimiento de las <strong>Jerarquías Goéticas</strong> se vuelve vital para saber a quién se está juzgando.</p>
-                    </div>
-                `
-            },
-            sal_jerarquia: {
-                title: "El Códice de los 72",
-                subtitle: "La Herencia de Salomón",
-                body: `
-                    <p class="text-xl mb-8 leading-relaxed">Complementando la historia de Abraham, aquí residen los nombres que él vio someterse ante su Ángel. Cada espíritu es una fuerza de la naturaleza que **Salomón** clasificó según su rango planetario.</p>
-                    <div class="grid grid-cols-2 gap-4 text-center">
-                        <div class="p-6 bg-gold/5 border border-gold/20 rounded">
-                            <span class="block cinzel text-gold text-2xl">REYES</span>
-                            <span class="text-[10px] opacity-40">EL PODER SOLAR</span>
-                        </div>
-                        <div class="p-6 bg-gold/5 border border-gold/20 rounded">
-                            <span class="block cinzel text-gold text-2xl">DUQUES</span>
-                            <span class="text-[10px] opacity-40">LA FUERZA VENUSINA</span>
-                        </div>
-                    </div>
-                `
-            },
-            sal_sellos: {
-                title: "La Alquimia del Mando",
-                subtitle: "Sellos y Correspondencias",
-                body: `
-                    <p class="text-xl mb-8 leading-relaxed">Abraham notó que Abramelín no usaba sellos metálicos, sino cuadrados mágicos de letras. Sin embargo, ambos sistemas coinciden: la vibración del objeto debe coincidir con la de la entidad.</p>
-                    <div class="data-card">
-                        <p class="italic mb-4">"Si grabas a un Rey en plomo, insultas su naturaleza. Si lo grabas en oro, creas un puente que él no puede evitar cruzar."</p>
-                        <p class="text-sm opacity-60">Esta es la misma ciencia que permitió la construcción del Primer Templo sin usar herramientas de hierro ruidosas.</p>
-                    </div>
-                `
-            },
-            sal_vasija: {
-                title: "El Secreto del Confinamiento",
-                subtitle: "La Vasija de Bronce",
-                body: `
-                    <p class="text-xl mb-8 leading-relaxed">La leyenda dice que Salomón encerró a los 72 espíritus en esta vasija. En la historia de Abraham, la 'vasija' es el propio **Oratorio del Mago**, un espacio consagrado donde nada impuro puede escapar ni entrar sin permiso.</p>
-                    <div class="flex items-center justify-center p-10 border border-gold/20 bg-black/40">
-                        <p class="cinzel text-gold text-center tracking-[0.2em] leading-relaxed">EL BRONCE ES EL CUERPO<br>EL SELLO ES LA VOLUNTAD<br>EL ESPÍRITU ES EL PRISIONERO</p>
-                    </div>
-                `
-            },
-            sal_pantaculos: {
-                title: "Los Escudos del Cielo",
-                subtitle: "Geometría Sagrada",
-                body: `
-                    <p class="text-xl mb-8 leading-relaxed">Son los mismos diseños que Abraham vio grabados en las paredes de los templos antiguos. Actúan como filtros. Sin un <strong>Pantáculo de Marte</strong>, la energía de un espíritu colérico podría destruir el sistema nervioso del operador.</p>
-                `
-            },
-            sal_herramientas: {
-                title: "Las Extensiones de la Voluntad",
-                subtitle: "El Equipo Ritual",
-                body: `
-                    <p class="text-xl mb-8 leading-relaxed">Abraham utilizaba una vara de almendro, mientras que Salomón prefería la espada. La lección es la misma: el objeto es un punto de enfoque para que la mente humana no se pierda en la inmensidad del plano astral.</p>
-                    <div class="flex flex-wrap gap-4 mt-8">
-                        <div class="px-6 py-4 border border-gold/30 flex-1 text-center">
-                            <span class="cinzel text-gold block">LA ESPADA</span>
-                            <span class="text-[9px] opacity-50 uppercase">El Análisis y la Separación</span>
-                        </div>
-                        <div class="px-6 py-4 border border-gold/30 flex-1 text-center">
-                            <span class="cinzel text-gold block">EL ANILLO</span>
-                            <span class="text-[9px] opacity-50 uppercase">La Unión y el Vínculo</span>
-                        </div>
-                    </div>
-                `
-            }
-        };
+        // Datos de secciones
+        const sections = [
+            { id: "section-intro", title: "Introducción • Liber Primus" },
+            { id: "section-warning", title: "Advertencia del Maestro" },
+            { id: "section-silence", title: "El Aislamiento de la Palabra" },
+            { id: "section-stages", title: "Las Etapas de la Operación" },
+            { id: "section-oratorio", title: "El Oratorio Sagrado" },
+            { id: "section-materials", title: "Materiales y Herramientas" },
+            { id: "section-squares", title: "Cuadrados Mágicos" },
+            { id: "section-diary", title: "Diario de Progreso" }
+        ];
 
-        function toggleMenu(btn, id) {
-            const submenu = document.getElementById(id);
-            const isOpen = submenu.classList.contains('open');
-            
-            document.querySelectorAll('.submenu').forEach(s => s.classList.remove('open'));
-            document.querySelectorAll('.menu-btn').forEach(b => b.classList.remove('active'));
-            document.querySelectorAll('.menu-btn span:last-child').forEach(s => s.innerText = '+');
+        let progress = {};
 
-            if (!isOpen) {
-                submenu.classList.add('open');
-                btn.classList.add('active');
-                btn.querySelector('span:last-child').innerText = '−';
+        function isSandbox() {
+            try {
+                localStorage.setItem('test', '1');
+                localStorage.removeItem('test');
+                return false;
+            } catch (e) {
+                return true;
             }
         }
 
-        function loadDoc(id, event) {
-            const data = DOCS[id];
-            if (!data) return;
-
-            document.querySelectorAll('.submenu-item').forEach(i => i.classList.remove('selected'));
-            if (event && event.target) {
-                event.target.classList.add('selected');
+        function loadProgress() {
+            if (isSandbox()) return;
+            const saved = localStorage.getItem('abramelin_progress');
+            if (saved) {
+                progress = JSON.parse(saved);
+                Object.keys(progress).forEach(id => markAsRead(id, false));
             }
-
-            const container = document.getElementById('main-content');
-            container.style.opacity = '0';
-            container.style.transform = 'translateY(10px)';
-
-            setTimeout(() => {
-                container.innerHTML = `
-                    <div class="mb-12">
-                        <p class="cinzel text-gold text-[10px] tracking-[0.5em] mb-2 uppercase">${data.subtitle}</p>
-                        <h1 class="cinzel text-5xl text-white font-bold tracking-tighter leading-tight">${data.title}</h1>
-                        <div class="w-20 h-[2px] bg-gold mt-6"></div>
-                    </div>
-                    <div class="doc-body text-gray-400 font-light leading-relaxed text-lg">
-                        ${data.body}
-                    </div>
-                    <div class="mt-20 pt-10 border-t border-gold/5 text-[9px] cinzel opacity-20 tracking-[1em] text-center">
-                        NEXUS VERIFIED • CHRONICLE INTEGRATED
-                    </div>
-                `;
-                container.style.opacity = '1';
-                container.style.transform = 'translateY(0)';
-            }, 300);
         }
 
-        window.addEventListener('load', () => {
+        function saveProgress() {
+            if (isSandbox()) return;
+            localStorage.setItem('abramelin_progress', JSON.stringify(progress));
+        }
+
+        function markAsRead(sectionId, showNotif = true) {
+            const sec = document.getElementById(sectionId);
+            if (sec) sec.classList.add('section-read');
+
+            progress[sectionId] = true;
+            saveProgress();
+
+            const menuItem = document.getElementById(`menu-${sectionId}`);
+            if (menuItem) menuItem.classList.add('read');
+
+            if (showNotif) showToast(`✓ ${sections.find(s => s.id === sectionId)?.title || 'Sección'}`);
+        }
+
+        function showToast(msg) {
+            const notif = document.getElementById('notification');
+            document.getElementById('notif-text').textContent = msg;
+            notif.style.display = 'flex';
+            setTimeout(() => { notif.style.opacity = '0'; setTimeout(() => { notif.style.display = 'none'; notif.style.opacity = '1'; }, 400); }, 2800);
+        }
+
+        function createSidebar() {
+            const menu = document.getElementById('sidebar-menu');
+            sections.forEach(sec => {
+                const div = document.createElement('div');
+                div.id = `menu-${sec.id}`;
+                div.className = `menu-item cursor-pointer hover:text-[#c5a059]`;
+                div.innerHTML = sec.title;
+                div.onclick = () => document.getElementById(sec.id).scrollIntoView({ behavior: 'smooth' });
+                menu.appendChild(div);
+            });
+        }
+
+        function setupScrollTracking() {
+            const observer = new IntersectionObserver(entries => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting && entry.intersectionRatio >= 0.6 && !progress[entry.target.id]) {
+                        markAsRead(entry.target.id);
+                    }
+                });
+            }, { threshold: 0.6 });
+
+            document.querySelectorAll('.section').forEach(s => observer.observe(s));
+        }
+
+        // Diario
+        function saveDiaryEntry() {
+            const input = document.getElementById('diary-input');
+            const text = input.value.trim();
+            if (!text) return;
+
+            let entries = JSON.parse(localStorage.getItem('abramelin_diary') || '[]');
+            entries.unshift({
+                id: Date.now(),
+                date: new Date().toLocaleDateString('es-ES', { weekday:'long', year:'numeric', month:'long', day:'numeric' }),
+                time: new Date().toLocaleTimeString('es-ES', { hour:'2-digit', minute:'2-digit' }),
+                content: text
+            });
+            localStorage.setItem('abramelin_diary', JSON.stringify(entries));
+            input.value = '';
+            renderDiary();
+            showToast("Entrada guardada en el Diario");
+        }
+
+        function renderDiary() {
+            const container = document.getElementById('diary-entries');
+            const entries = JSON.parse(localStorage.getItem('abramelin_diary') || '[]');
+
+            if (entries.length === 0) {
+                container.innerHTML = `<p class="text-center py-8 text-[#c5a059]/50 italic">Aún no hay entradas...</p>`;
+                return;
+            }
+
+            container.innerHTML = entries.map(e => `
+                <div class="diary-entry p-6 rounded-2xl">
+                    <div class="flex justify-between text-xs cinzel text-[#c5a059]/70 mb-3">
+                        <span>${e.date}</span><span>${e.time}</span>
+                    </div>
+                    <p class="spectral whitespace-pre-wrap">${e.content}</p>
+                    <button onclick="deleteEntry(${e.id})" class="mt-4 text-xs text-red-400 hover:text-red-500">Eliminar</button>
+                </div>
+            `).join('');
+        }
+
+        function deleteEntry(id) {
+            if (!confirm("¿Eliminar esta entrada?")) return;
+            let entries = JSON.parse(localStorage.getItem('abramelin_diary') || '[]');
+            entries = entries.filter(e => e.id !== id);
+            localStorage.setItem('abramelin_diary', JSON.stringify(entries));
+            renderDiary();
+        }
+
+        function iniciarCompromiso() {
+            showToast("✅ Día 1 iniciado. Mantén el silencio y la disciplina.");
+        }
+
+        function resetProgress() {
+            if (confirm("¿Reiniciar todo el progreso y diario?")) {
+                localStorage.clear();
+                location.reload();
+            }
+        }
+
+        // Init
+        window.onload = () => {
             setTimeout(() => {
                 document.getElementById('loading-screen').style.opacity = '0';
-                setTimeout(() => document.getElementById('loading-screen').style.display = 'none', 500);
-            }, 1500);
-        });
+                setTimeout(() => document.getElementById('loading-screen').style.display = 'none', 800);
+            }, 1200);
+
+            createSidebar();
+            loadProgress();
+            setupScrollTracking();
+            renderDiary();
+
+            if (isSandbox()) {
+                console.warn("Modo sandbox detectado: localStorage desactivado (normal en este chat).");
+            }
+        };
     </script>
 </body>
 </html>
