@@ -217,7 +217,7 @@
                 <div class="h-[80vh] flex flex-col items-center justify-center text-center">
                     <div class="w-32 h-[1px] bg-gold/20 mb-10"></div>
                     <h1 class="cinzel text-5xl text-white font-bold tracking-[0.3em] mb-4">ARCHIVUM</h1>
-                    <p class="cinzel text-gold text-[10px] tracking-[0.8em] opacity-40 uppercase">Seleccione una entrada en el Nexus</p>
+                    <p class="cinzel text-gold text-[10px] tracking-[0.8em] opacity-40 uppercase">Seleccione una entrada para desvelar la historia</p>
                     <div class="w-32 h-[1px] bg-gold/20 mt-10"></div>
                 </div>
             </div>
@@ -227,123 +227,129 @@
     <script>
         const DOCS = {
             abr_viaje: {
-                title: "El Viaje de Abraham",
-                subtitle: "De Europa al Desierto de Egipto",
+                title: "El Encuentro en el Desierto",
+                subtitle: "Crónica de Abraham, Año 1409",
                 body: `
-                    <p class="text-xl mb-8 leading-relaxed">Abraham de Worms describe su periplo iniciado en 1397 en busca de la verdadera magia. Tras encontrar a Abramelín en el desierto, recibe el sistema que permite al hombre comandar a los espíritus.</p>
+                    <p class="text-xl mb-8 leading-relaxed italic">"Había viajado por toda Europa buscando el saber del Rey Salomón, encontrando solo charlatanes. No fue hasta que mis pies tocaron la arena de Egipto que hallé a Abramelín."</p>
+                    <p class="text-lg mb-8 leading-relaxed">Abraham relata cómo este eremita poseía una magia que no dependía de trucos, sino de una estructura divina. Al igual que **Salomón** usó el Sello de Dios para comandar espíritus, Abramelín le enseñó que el secreto reside en la autoridad del propio espíritu sobre la materia.</p>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div class="data-card !m-0">
-                            <h4 class="cinzel text-gold mb-2 uppercase text-[10px] tracking-widest">ADVERTENCIA</h4>
-                            <p class="text-sm opacity-70">Este libro no contiene rituales, sino la justificación ética y espiritual necesaria para la operación.</p>
+                        <div class="data-card !m-0 border-gold/30">
+                            <h4 class="cinzel text-gold mb-2 uppercase text-[10px] tracking-widest">EL NEXO</h4>
+                            <p class="text-sm opacity-70">El sistema de Abramelín es la "Llave" práctica para aplicar la teoría de las <strong>Clavículas de Salomón</strong> sin riesgo de locura.</p>
                         </div>
                         <div class="data-card !m-0">
-                            <h4 class="cinzel text-gold mb-2 uppercase text-[10px] tracking-widest">REQUISITO</h4>
-                            <p class="text-sm opacity-70">Solo aquel con intenciones puras y mente firme puede sobrevivir a la manifestación de los Príncipes Infernales.</p>
+                            <h4 class="cinzel text-gold mb-2 uppercase text-[10px] tracking-widest">CONSEJO</h4>
+                            <p class="text-sm opacity-70">No busques el poder de los 72 espíritus sin antes haber purificado tu intención en el desierto personal.</p>
                         </div>
                     </div>
                 `
             },
             abr_maestros: {
-                title: "Falsos Maestros",
-                subtitle: "Charlatanes y Peligros del Camino",
+                title: "Las Sombras de la Vía",
+                subtitle: "Lección sobre el Engaño",
                 body: `
-                    <p class="text-xl mb-8 leading-relaxed">Abraham advierte contra los magos que conoció en su viaje, quienes usaban pactos sangrientos o trucos de feria para engañar a los incautos.</p>
+                    <p class="text-xl mb-8 leading-relaxed">Abraham advierte: "Vi a muchos que decían poseer la <strong>Vasija de Bronce de Salomón</strong>, pero sus vasijas estaban vacías o contenían solo demonios de su propia creación."</p>
                     <div class="data-card">
-                        <h4 class="cinzel text-gold mb-4 uppercase text-sm tracking-widest">Tipos de Engaño Documentados</h4>
-                        <ul class="space-y-4 text-base">
-                            <li class="flex gap-4"><span class="text-red-500">✕</span> <span>Magia de sangre: Promesas de poder rápido a cambio de la esencia vital.</span></li>
-                            <li class="flex gap-4"><span class="text-red-500">✕</span> <span>Charlatanería: Uso de espejos y humo para simular apariciones espirituales.</span></li>
-                            <li class="flex gap-4"><span class="text-red-500">✕</span> <span>Magia Egipcia degenerada: Rituales que invocan fuerzas sin control ético.</span></li>
+                        <h4 class="cinzel text-gold mb-4 uppercase text-sm tracking-widest">El Error de los "Iluminados"</h4>
+                        <p class="mb-6 opacity-80 text-lg">Muchos magos de su época intentaban usar los <strong>Sellos de Metales</strong> sin la preparación de los 6 meses. El resultado era siempre el mismo: obsesión, ruina y, a menudo, la muerte por manos de entidades que no sabían desterrar.</p>
+                        <ul class="space-y-4 text-base italic opacity-60">
+                            <li>- "Pactar es de esclavos; mandar es de hombres libres."</li>
+                            <li>- "El oro de Salomón brilla, pero el metal de los falsos maestros se oxida con la primera mentira."</li>
                         </ul>
                     </div>
                 `
             },
             abr_preparacion: {
-                title: "La Sagrada Ascesis",
-                subtitle: "Manual de Purificación del Operador",
+                title: "La Construcción del Templo Interno",
+                subtitle: "Fase de Retiro",
                 body: `
-                    <p class="text-xl mb-8 leading-relaxed">Un proceso de 6 meses de retiro absoluto. El operador debe vivir en castidad, oración y soledad casi total para sintonizar su vibración con la del Ángel.</p>
-                    <div class="data-card">
-                        <h4 class="cinzel text-gold mb-4 uppercase text-sm tracking-widest">Fases de la Purificación</h4>
-                        <p class="mb-4">Mes 1-2: Retiro social y limpieza del cuerpo.</p>
-                        <p class="mb-4">Mes 3-4: Oración intensiva y estudio del oratorio.</p>
-                        <p>Mes 5-6: Invocación final y espera de la señal angélica.</p>
+                    <p class="text-xl mb-8 leading-relaxed">Así como el Templo de Salomón fue construido con medidas precisas, el operador debe reconstruirse durante 6 meses. No es un simple ayuno; es la forja de una herramienta viviente.</p>
+                    <div class="data-card border-l-4 border-gold">
+                        <h4 class="cinzel text-gold mb-4 uppercase text-sm tracking-widest">Similitudes con el Arte de Salomón</h4>
+                        <p class="mb-4">Para usar la <strong>Espada del Arte</strong>, primero hay que ser el filo. Durante este tiempo, el mago se despoja de sus influencias planetarias para quedar en un estado de 'vacío' donde solo quepa la luz del Ángel.</p>
+                        <p class="text-sm opacity-50 uppercase tracking-widest">Mes 1 al 6: Del Plomo de la Tierra al Oro del Espíritu.</p>
                     </div>
                 `
             },
             abr_angel: {
-                title: "El Santo Ángel Guardián",
-                subtitle: "Conocimiento y Conversación",
+                title: "La Corona del Sistema",
+                subtitle: "El Santo Ángel Guardián",
                 body: `
-                    <p class="text-xl mb-8 leading-relaxed">La meta final. Al contactar al Ángel, el mago recibe su nombre secreto y el poder de dominar las regiones inferiores sin ser corrompido.</p>
+                    <p class="text-xl mb-8 leading-relaxed">Este es el momento en que el mago recibe su 'Nombre Nuevo'. Al igual que **Salomón** recibió su sabiduría directamente de la fuente, el operador de Abramelín obtiene un tutor divino personal.</p>
                     <div class="ornament"></div>
-                    <p class="italic text-center opacity-60">"El Ángel es tu verdadero ser, la chispa divina que te guiará a través del abismo."</p>
+                    <p class="text-lg leading-relaxed text-center px-10">"Una vez que el Ángel aparece, los <strong>Pantáculos Maestros</strong> ya no son solo dibujos en papel; se convierten en llaves ardientes que los espíritus no pueden ignorar."</p>
                 `
             },
             abr_principes: {
-                title: "Sometimiento Infernal",
-                subtitle: "El Comando de la Sombra",
+                title: "El Juicio de las Sombras",
+                subtitle: "Sometimiento de los Cuatro",
                 body: `
-                    <p class="text-xl mb-8 leading-relaxed">Tras el contacto angélico, el mago convoca a los 4 Príncipes Superiores: Lucifer, Leviatán, Satán y Belial, para obligarlos a jurar obediencia.</p>
-                    <div class="p-8 border border-red-900/20 bg-red-900/5">
-                        <h5 class="cinzel text-red-500 mb-2">Protocolo de Evocación</h5>
-                        <p class="text-sm">Se realiza en el tercer día tras la manifestación del Ángel. Los espíritus deben aparecer de forma amable y sin ruidos espantosos bajo el mando de la vara de almendro.</p>
+                    <p class="text-xl mb-8 leading-relaxed">Con la autoridad del Ángel, el mago convoca a los Reyes del Abismo. Es una escena que recuerda a la leyenda de **Salomón sentando a los genios en su tribunal**.</p>
+                    <div class="p-8 border border-red-900/40 bg-red-900/10 rounded-lg">
+                        <h5 class="cinzel text-red-400 mb-4 text-center">LA CORTE INFERNAL</h5>
+                        <p class="text-base leading-relaxed opacity-80">No se les llama por curiosidad, sino para que juren sobre los <strong>Instrumentos del Arte</strong> que servirán al mago en su camino. Aquí, el conocimiento de las <strong>Jerarquías Goéticas</strong> se vuelve vital para saber a quién se está juzgando.</p>
                     </div>
                 `
             },
             sal_jerarquia: {
-                title: "Jerarquía de la Goecia",
-                subtitle: "Los 72 Espíritus del Rey Salomón",
+                title: "El Códice de los 72",
+                subtitle: "La Herencia de Salomón",
                 body: `
-                    <p class="text-xl mb-8 leading-relaxed">La Goecia detalla las oficinas y rangos de los espíritus encerrados por Salomón. Cada uno tiene un sello y una virtud específica.</p>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div class="p-4 border border-gold/10">Bael (Rey) - Invisibilidad</div>
-                        <div class="p-4 border border-gold/10">Agares (Duque) - Idiomas</div>
-                        <div class="p-4 border border-gold/10">Paimon (Rey) - Ciencias</div>
-                        <div class="p-4 border border-gold/10">Asmodeus (Rey) - Virtudes</div>
+                    <p class="text-xl mb-8 leading-relaxed">Complementando la historia de Abraham, aquí residen los nombres que él vio someterse ante su Ángel. Cada espíritu es una fuerza de la naturaleza que **Salomón** clasificó según su rango planetario.</p>
+                    <div class="grid grid-cols-2 gap-4 text-center">
+                        <div class="p-6 bg-gold/5 border border-gold/20 rounded">
+                            <span class="block cinzel text-gold text-2xl">REYES</span>
+                            <span class="text-[10px] opacity-40">EL PODER SOLAR</span>
+                        </div>
+                        <div class="p-6 bg-gold/5 border border-gold/20 rounded">
+                            <span class="block cinzel text-gold text-2xl">DUQUES</span>
+                            <span class="text-[10px] opacity-40">LA FUERZA VENUSINA</span>
+                        </div>
                     </div>
                 `
             },
             sal_sellos: {
-                title: "Sellos de Metales",
-                subtitle: "Correspondencias Planetarias",
+                title: "La Alquimia del Mando",
+                subtitle: "Sellos y Correspondencias",
                 body: `
-                    <p class="text-xl mb-8 leading-relaxed">Para que un sello goético sea efectivo, debe ser grabado en el metal correspondiente a su rango planetario.</p>
-                    <ul class="space-y-2 text-base">
-                        <li>• Reyes: Oro (Sol)</li>
-                        <li>• Duques: Cobre (Venus)</li>
-                        <li>• Príncipes: Estaño (Júpiter)</li>
-                        <li>• Marqueses: Plata (Luna)</li>
-                    </ul>
+                    <p class="text-xl mb-8 leading-relaxed">Abraham notó que Abramelín no usaba sellos metálicos, sino cuadrados mágicos de letras. Sin embargo, ambos sistemas coinciden: la vibración del objeto debe coincidir con la de la entidad.</p>
+                    <div class="data-card">
+                        <p class="italic mb-4">"Si grabas a un Rey en plomo, insultas su naturaleza. Si lo grabas en oro, creas un puente que él no puede evitar cruzar."</p>
+                        <p class="text-sm opacity-60">Esta es la misma ciencia que permitió la construcción del Primer Templo sin usar herramientas de hierro ruidosas.</p>
+                    </div>
                 `
             },
             sal_vasija: {
-                title: "La Vasija de Bronce",
-                subtitle: "El Arte del Confinamiento",
+                title: "El Secreto del Confinamiento",
+                subtitle: "La Vasija de Bronce",
                 body: `
-                    <p class="text-xl mb-8 leading-relaxed">Salomón encerró a los espíritus en una vasija sellada con el Sello de Dios. Este secreto permitía al rey usarlos para construir el Templo de Jerusalén.</p>
-                    <div class="data-card text-center italic">
-                        "El bronce representa la fuerza terrestre, el sello representa la voluntad divina."
+                    <p class="text-xl mb-8 leading-relaxed">La leyenda dice que Salomón encerró a los 72 espíritus en esta vasija. En la historia de Abraham, la 'vasija' es el propio **Oratorio del Mago**, un espacio consagrado donde nada impuro puede escapar ni entrar sin permiso.</p>
+                    <div class="flex items-center justify-center p-10 border border-gold/20 bg-black/40">
+                        <p class="cinzel text-gold text-center tracking-[0.2em] leading-relaxed">EL BRONCE ES EL CUERPO<br>EL SELLO ES LA VOLUNTAD<br>EL ESPÍRITU ES EL PRISIONERO</p>
                     </div>
                 `
             },
             sal_pantaculos: {
-                title: "Pantáculos Maestros",
-                subtitle: "Protección y Poder Planetario",
+                title: "Los Escudos del Cielo",
+                subtitle: "Geometría Sagrada",
                 body: `
-                    <p class="text-xl mb-8 leading-relaxed">Diseños geométricos que capturan la energía de los 7 planetas antiguos. Fundamentales para evitar el acoso de los espíritus durante la operación.</p>
+                    <p class="text-xl mb-8 leading-relaxed">Son los mismos diseños que Abraham vio grabados en las paredes de los templos antiguos. Actúan como filtros. Sin un <strong>Pantáculo de Marte</strong>, la energía de un espíritu colérico podría destruir el sistema nervioso del operador.</p>
                 `
             },
             sal_herramientas: {
-                title: "Instrumentos del Arte",
-                subtitle: "El Equipamiento del Mago",
+                title: "Las Extensiones de la Voluntad",
+                subtitle: "El Equipo Ritual",
                 body: `
-                    <p class="text-xl mb-8 leading-relaxed">Cada herramienta debe ser fabricada o comprada en horas astrológicas específicas y exorcizada antes de su uso.</p>
-                    <div class="flex flex-wrap gap-4">
-                        <span class="px-4 py-2 border border-gold/20 cinzel text-[10px]">La Espada</span>
-                        <span class="px-4 py-2 border border-gold/20 cinzel text-[10px]">El Athame</span>
-                        <span class="px-4 py-2 border border-gold/20 cinzel text-[10px]">La Túnica Blanca</span>
-                        <span class="px-4 py-2 border border-gold/20 cinzel text-[10px]">El Anillo</span>
+                    <p class="text-xl mb-8 leading-relaxed">Abraham utilizaba una vara de almendro, mientras que Salomón prefería la espada. La lección es la misma: el objeto es un punto de enfoque para que la mente humana no se pierda en la inmensidad del plano astral.</p>
+                    <div class="flex flex-wrap gap-4 mt-8">
+                        <div class="px-6 py-4 border border-gold/30 flex-1 text-center">
+                            <span class="cinzel text-gold block">LA ESPADA</span>
+                            <span class="text-[9px] opacity-50 uppercase">El Análisis y la Separación</span>
+                        </div>
+                        <div class="px-6 py-4 border border-gold/30 flex-1 text-center">
+                            <span class="cinzel text-gold block">EL ANILLO</span>
+                            <span class="text-[9px] opacity-50 uppercase">La Unión y el Vínculo</span>
+                        </div>
                     </div>
                 `
             }
@@ -366,10 +372,7 @@
 
         function loadDoc(id, event) {
             const data = DOCS[id];
-            if (!data) {
-                console.error("Documento no encontrado:", id);
-                return;
-            }
+            if (!data) return;
 
             document.querySelectorAll('.submenu-item').forEach(i => i.classList.remove('selected'));
             if (event && event.target) {
@@ -384,14 +387,14 @@
                 container.innerHTML = `
                     <div class="mb-12">
                         <p class="cinzel text-gold text-[10px] tracking-[0.5em] mb-2 uppercase">${data.subtitle}</p>
-                        <h1 class="cinzel text-6xl text-white font-bold tracking-tighter">${data.title}</h1>
+                        <h1 class="cinzel text-5xl text-white font-bold tracking-tighter leading-tight">${data.title}</h1>
                         <div class="w-20 h-[2px] bg-gold mt-6"></div>
                     </div>
                     <div class="doc-body text-gray-400 font-light leading-relaxed text-lg">
                         ${data.body}
                     </div>
                     <div class="mt-20 pt-10 border-t border-gold/5 text-[9px] cinzel opacity-20 tracking-[1em] text-center">
-                        NEXUS VERIFIED • AUTHENTIC CONTENT
+                        NEXUS VERIFIED • CHRONICLE INTEGRATED
                     </div>
                 `;
                 container.style.opacity = '1';
