@@ -5,175 +5,277 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Archivum Arcano: Nexus Finalis</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Inter:wght@200;400;700&family=Space+Grotesk:wght@300;500&display=swap" rel="stylesheet">
     <style>
-        :root { --gold: #c5a059; --bg-deep: #050507; }
-        * { -webkit-user-select: none; user-select: none; outline: none; }
+        :root {
+            --gold: #c5a059;
+            --gold-bright: #f0d7a7;
+            --bg-deep: #030305;
+            --accent: #1a1a1f;
+        }
+
+        * { 
+            -webkit-user-select: none; 
+            user-select: none; 
+            outline: none; 
+            cursor: crosshair;
+        }
+
         body {
             background-color: var(--bg-deep);
             color: #d1d1d6;
-            font-family: 'Inter', sans-serif;
+            font-family: 'Space Grotesk', sans-serif;
             margin: 0;
-            background-image: radial-gradient(circle at 50% 50%, rgba(197, 160, 89, 0.05) 0%, transparent 80%);
+            overflow: hidden;
             min-height: 100vh;
         }
+
+        /* Ruido de fondo sutil */
+        body::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            background-image: url("https://www.transparenttextures.com/patterns/stardust.png");
+            opacity: 0.2;
+            pointer-events: none;
+            z-index: 1;
+        }
+
         .cinzel { font-family: 'Cinzel', serif; }
+
+        /* Capas de Interfaz */
         .layer {
-            position: fixed; inset: 0;
-            display: flex; flex-direction: column;
-            justify-content: center; align-items: center;
+            position: fixed;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem;
             background: var(--bg-deep);
+            transition: all 1.2s cubic-bezier(0.8, 0, 0.2, 1);
             z-index: 1000;
-            transition: opacity 0.8s ease, transform 0.8s ease;
         }
-        .layer.hidden { opacity: 0; pointer-events: none; transform: scale(1.05); }
-        .arcane-btn {
+
+        .layer.hidden { 
+            opacity: 0; 
+            pointer-events: none; 
+            filter: blur(40px) brightness(0);
+            transform: scale(1.1);
+        }
+
+        /* Marco de Pantalla Moderno */
+        .screen-frame {
+            position: fixed;
+            inset: 20px;
+            border: 1px solid rgba(197, 160, 89, 0.1);
+            pointer-events: none;
+            z-index: 2000;
+            transition: 0.5s;
+        }
+
+        .corner {
+            position: absolute;
+            width: 15px;
+            height: 15px;
             border: 1px solid var(--gold);
-            color: var(--gold);
-            padding: 12px 30px;
-            font-family: 'Cinzel', serif;
-            letter-spacing: 3px;
-            background: rgba(197, 160, 89, 0.05);
-            cursor: pointer;
-            transition: 0.3s;
-            text-transform: uppercase;
-            font-size: 0.8rem;
-            border-radius: 2px;
         }
-        .arcane-btn:hover:not(:disabled) { background: var(--gold); color: black; box-shadow: 0 0 20px rgba(197, 160, 89, 0.3); }
-        .arcane-btn:disabled { opacity: 0.3; cursor: not-allowed; }
-        .error-msg { color: #ff4444; font-size: 10px; font-family: 'Cinzel', serif; margin-top: 20px; text-transform: uppercase; letter-spacing: 1px; }
+        .tl { top: -1px; left: -1px; border-right: none; border-bottom: none; }
+        .tr { top: -1px; right: -1px; border-left: none; border-bottom: none; }
+        .bl { bottom: -1px; left: -1px; border-right: none; border-top: none; }
+        .br { bottom: -1px; right: -1px; border-left: none; border-top: none; }
+
+        /* Botón Estilo Neomorfismo Oscuro / FUI */
+        .fui-btn {
+            position: relative;
+            padding: 12px 40px;
+            background: transparent;
+            border: 1px solid rgba(197, 160, 89, 0.3);
+            color: var(--gold);
+            font-family: 'Cinzel', serif;
+            font-size: 0.7rem;
+            letter-spacing: 5px;
+            text-transform: uppercase;
+            overflow: hidden;
+            transition: 0.4s;
+        }
+
+        .fui-btn::before {
+            content: "";
+            position: absolute;
+            top: 0; left: -100%;
+            width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(197, 160, 89, 0.2), transparent);
+            transition: 0.5s;
+        }
+
+        .fui-btn:hover::before { left: 100%; }
+
+        .fui-btn:hover {
+            border-color: var(--gold);
+            box-shadow: 0 0 20px rgba(197, 160, 89, 0.15);
+            background: rgba(197, 160, 89, 0.02);
+            transform: translateY(-2px);
+        }
+
+        /* Línea de Escaneo Láser */
+        .scanline {
+            position: absolute;
+            width: 100%;
+            height: 2px;
+            background: rgba(197, 160, 89, 0.1);
+            top: 0;
+            left: 0;
+            box-shadow: 0 0 15px var(--gold);
+            animation: scan 4s linear infinite;
+            z-index: 5;
+            pointer-events: none;
+        }
+
+        @keyframes scan {
+            0% { top: 0%; opacity: 0; }
+            5% { opacity: 1; }
+            95% { opacity: 1; }
+            100% { top: 100%; opacity: 0; }
+        }
+
+        /* Animación de Carga Gótica-Tech */
+        .nexus-loader {
+            position: relative;
+            width: 80px;
+            height: 80px;
+        }
+
+        .circle {
+            position: absolute;
+            inset: 0;
+            border: 1px solid transparent;
+            border-top: 1px solid var(--gold);
+            border-radius: 50%;
+            animation: spin var(--d) linear infinite;
+        }
+
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+
+        .glitch-text {
+            animation: glitch 3s infinite;
+        }
+
+        @keyframes glitch {
+            0% { text-shadow: 0.5px 0 0 rgba(255,0,0,0.5), -0.5px 0 0 rgba(0,255,255,0.5); }
+            2% { text-shadow: 2px 0 0 rgba(255,0,0,0.5), -2px 0 0 rgba(0,255,255,0.5); }
+            4% { text-shadow: 0 0 0 transparent; }
+        }
     </style>
 </head>
-<body>
+<body oncontextmenu="return false;">
 
-    <!-- Capa de Carga y Errores Críticos -->
-    <div id="loading-screen" class="layer">
-        <div id="loader-spinner" class="w-12 h-12 border-2 border-gold/10 border-t-gold rounded-full animate-spin mb-6"></div>
-        <p id="loader-text" class="cinzel text-[10px] text-gold tracking-[0.4em] uppercase">Sincronizando Frecuencia...</p>
-        <div id="setup-error" class="error-msg hidden px-10 text-center"></div>
+    <!-- MARCO DE INTERFAZ GLOBAL -->
+    <div class="screen-frame">
+        <div class="corner tl"></div>
+        <div class="corner tr"></div>
+        <div class="corner bl"></div>
+        <div class="corner br"></div>
+        <div class="scanline"></div>
     </div>
 
-    <!-- Interfaz de Autenticación -->
-    <section id="layer-auth" class="layer hidden">
-        <div class="max-w-md w-full text-center px-6">
-            <h2 class="cinzel text-gold text-3xl mb-2 tracking-[0.6em]">NEXUS</h2>
-            <p class="spectral italic text-gray-600 mb-16 text-xs uppercase tracking-widest">Identificación de Iniciado</p>
-            
-            <button id="google-btn" onclick="handleGoogleSignIn()" class="arcane-btn w-full mb-6">
-                Acceder con Google
-            </button>
-            
-            <p id="auth-status" class="text-[9px] cinzel text-white/30 uppercase tracking-[0.2em]"></p>
+    <!-- PANTALLA DE CARGA -->
+    <div id="loading-screen" class="layer">
+        <div class="nexus-loader mb-8">
+            <div class="circle" style="--d: 1s; padding: 5px;"></div>
+            <div class="circle" style="--d: 2s; padding: 15px;"></div>
+            <div class="circle" style="--d: 3s; padding: 25px;"></div>
         </div>
-    </section>
+        <p id="loader-text" class="cinzel text-[10px] text-gold tracking-[0.8em] uppercase opacity-70">
+            Sincronizando Frecuencia
+        </p>
+    </div>
 
-    <!-- UI Principal Post-Login -->
-    <div id="main-ui" class="hidden opacity-0 transition-opacity duration-1000 p-10 md:p-32 text-center">
-        <header class="mb-20">
-            <h1 class="cinzel text-white text-4xl md:text-6xl tracking-[0.4em] font-bold">ACCESO CONCEDIDO</h1>
-            <div class="w-20 h-px bg-gold/30 mx-auto my-8"></div>
-            <p id="user-info" class="cinzel text-[10px] text-gold tracking-widest uppercase"></p>
-        </header>
+    <!-- INTERFAZ PRINCIPAL -->
+    <div id="main-ui" class="hidden opacity-0 transition-opacity duration-1000 min-h-screen flex flex-col items-center justify-center p-6 text-center z-10">
         
-        <div class="max-w-xl mx-auto glass-card border border-gold/10 p-10 bg-white/5 backdrop-blur-md">
-            <p class="spectral italic text-gray-400">"El conocimiento es la única llave que no pesa."</p>
+        <div class="absolute top-10 left-10 text-left opacity-30 cinzel text-[8px] tracking-[3px] space-y-2 hidden md:block">
+            <p>SYS.VERSION: 2.0.4-FINALIS</p>
+            <p>STATUS: CONNECTION_STABLE</p>
+            <p>LOCATION: 51.5074° N, 0.1278° W</p>
         </div>
 
-        <button onclick="handleSignOut()" class="mt-32 text-red-900/50 hover:text-red-600 cinzel text-[10px] tracking-widest uppercase transition-colors">
-            Cerrar Conexión
-        </button>
+        <header class="mb-12 relative">
+            <h1 class="cinzel text-white text-5xl md:text-8xl tracking-[0.2em] font-bold glitch-text">
+                NEXUS
+            </h1>
+            <div class="flex items-center justify-center gap-4 mt-6">
+                <div class="h-[1px] w-12 bg-gold/20"></div>
+                <p class="cinzel text-[9px] text-gold tracking-[0.5em] uppercase">Investigador: Iniciado</p>
+                <div class="h-[1px] w-12 bg-gold/20"></div>
+            </div>
+        </header>
+
+        <main class="max-w-2xl w-full">
+            <div class="relative group">
+                <!-- Fondo Glassmorphism -->
+                <div class="absolute inset-0 bg-white/[0.02] backdrop-blur-md -rotate-1 border border-white/5 transition-transform group-hover:rotate-0"></div>
+                
+                <div class="relative p-10 md:p-16 border border-gold/10 bg-transparent overflow-hidden">
+                    <p class="spectral italic text-gray-400 text-lg md:text-xl leading-relaxed mb-8">
+                        "El conocimiento es la única llave que no pesa, pero solo aquel que está en equilibrio puede cargar su verdad."
+                    </p>
+                    
+                    <div class="grid grid-cols-3 gap-4 border-t border-gold/10 pt-8">
+                        <div class="text-center">
+                            <span class="block text-[8px] cinzel text-gold/40 mb-1">Pilar I</span>
+                            <span class="block text-[10px] cinzel text-white tracking-widest uppercase">Abramelín</span>
+                        </div>
+                        <div class="text-center border-x border-gold/10 px-2">
+                            <span class="block text-[8px] cinzel text-gold/40 mb-1">Sistema</span>
+                            <span class="block text-[10px] cinzel text-white tracking-widest uppercase">Finalis</span>
+                        </div>
+                        <div class="text-center">
+                            <span class="block text-[8px] cinzel text-gold/40 mb-1">Pilar II</span>
+                            <span class="block text-[10px] cinzel text-white tracking-widest uppercase">Salomón</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer class="mt-20">
+            <button onclick="location.reload()" class="fui-btn">
+                Reiniciar Nexus
+            </button>
+        </footer>
+
+        <div class="absolute bottom-10 right-10 text-right opacity-30 cinzel text-[8px] tracking-[3px] hidden md:block">
+            <p>© 2024 ARCHIVUM ARCANO</p>
+            <p>SINCRONÍA LOCALIZADA</p>
+        </div>
     </div>
 
     <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { 
-            getAuth, 
-            onAuthStateChanged, 
-            signInWithRedirect, 
-            getRedirectResult, 
-            GoogleAuthProvider, 
-            signOut 
-        } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        window.addEventListener('load', () => {
+            const loadingScreen = document.getElementById('loading-screen');
+            const mainUi = document.getElementById('main-ui');
 
-        // Función para obtener variables con seguridad
-        const getEnv = (key) => {
-            try {
-                return import.meta.env[key] || null;
-            } catch (e) {
-                return null;
+            // Simulación de carga secuencial
+            setTimeout(() => {
+                loadingScreen.classList.add('hidden');
+                mainUi.classList.remove('hidden');
+                
+                setTimeout(() => {
+                    mainUi.classList.add('opacity-100');
+                }, 100);
+            }, 3000); 
+        });
+
+        // Efecto de movimiento sutil al mover el ratón (Parallax)
+        document.addEventListener('mousemove', (e) => {
+            const x = (e.clientX / window.innerWidth - 0.5) * 20;
+            const y = (e.clientY / window.innerHeight - 0.5) * 20;
+            const ui = document.getElementById('main-ui');
+            if(!ui.classList.contains('hidden')) {
+                ui.style.transform = `perspective(1000px) rotateY(${x}deg) rotateX(${-y}deg)`;
             }
-        };
-
-        const config = {
-            apiKey: getEnv('VITE_FIREBASE_API_KEY'),
-            authDomain: getEnv('VITE_FIREBASE_AUTH_DOMAIN'),
-            projectId: getEnv('VITE_FIREBASE_PROJECT_ID'),
-            storageBucket: getEnv('VITE_FIREBASE_STORAGE_BUCKET'),
-            messagingSenderId: getEnv('VITE_FIREBASE_MESSAGING_SENDER_ID'),
-            appId: getEnv('VITE_FIREBASE_APP_ID')
-        };
-
-        const setupErrorEl = document.getElementById('setup-error');
-        const loaderText = document.getElementById('loader-text');
-
-        // Verificación de integridad de variables
-        const missingKeys = Object.keys(config).filter(k => !config[k]);
-        
-        if (missingKeys.length > 0) {
-            document.getElementById('loader-spinner').style.display = 'none';
-            loaderText.innerText = "FALLO DE CONFIGURACIÓN";
-            setupErrorEl.innerHTML = `Variables faltantes o mal configuradas en Vercel:<br><span class="text-white mt-2 block">${missingKeys.join(', ')}</span><br><br>Asegúrate de que tengan el prefijo VITE_`;
-            setupErrorEl.classList.remove('hidden');
-        } else {
-            // Inicializar Firebase solo si la config está completa
-            try {
-                const app = initializeApp(config);
-                const auth = getAuth(app);
-                const googleProvider = new GoogleAuthProvider();
-
-                // Manejo de redirección
-                getRedirectResult(auth).then(() => {
-                    console.log("Redirección completada");
-                }).catch((error) => {
-                    console.error("Error Auth:", error);
-                    const status = document.getElementById('auth-status');
-                    status.innerText = "Error: Dominio no autorizado o problema de red.";
-                });
-
-                // Observador de estado
-                onAuthStateChanged(auth, (user) => {
-                    document.getElementById('loading-screen').classList.add('hidden');
-                    if (user) {
-                        document.getElementById('layer-auth').classList.add('hidden');
-                        document.getElementById('main-ui').classList.remove('hidden');
-                        setTimeout(() => document.getElementById('main-ui').classList.add('opacity-100'), 50);
-                        document.getElementById('user-info').innerText = "IDENTIDAD: " + user.email;
-                    } else {
-                        document.getElementById('layer-auth').classList.remove('hidden');
-                        document.getElementById('main-ui').classList.add('hidden');
-                    }
-                });
-
-                window.handleGoogleSignIn = () => {
-                    document.getElementById('google-btn').disabled = true;
-                    document.getElementById('auth-status').innerText = "REDIRECCIONANDO...";
-                    signInWithRedirect(auth, googleProvider);
-                };
-
-                window.handleSignOut = () => {
-                    signOut(auth).then(() => {
-                        window.location.reload();
-                    });
-                };
-
-            } catch (err) {
-                console.error("Firebase Init Error:", err);
-                loaderText.innerText = "ERROR DE INICIALIZACIÓN";
-                setupErrorEl.innerText = err.message;
-                setupErrorEl.classList.remove('hidden');
-            }
-        }
+        });
     </script>
 </body>
 </html>
