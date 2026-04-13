@@ -33,119 +33,107 @@
         }
 
         .cinzel { font-family: 'Cinzel', serif; }
-        .animate-fade { animation: fadeIn 0.4s ease forwards; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        
+        .animate-fade-in { animation: fadeIn 0.6s ease-out forwards; }
+        @keyframes fadeIn { 
+            from { opacity: 0; transform: translateY(10px); } 
+            to { opacity: 1; transform: translateY(0); } 
+        }
 
-        /* Sidebar Navigation */
         .sidebar {
-            width: 300px;
+            width: 320px;
             height: 100vh;
             background: var(--bg-card);
             border-right: 1px solid rgba(197, 160, 89, 0.1);
             overflow-y: auto;
             z-index: 50;
+            flex-shrink: 0;
+        }
+
+        .menu-category {
+            font-size: 10px;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: var(--gold);
+            padding: 25px 20px 10px;
+            opacity: 0.6;
+            font-weight: bold;
         }
 
         .menu-btn {
             width: 100%;
             text-align: left;
-            padding: 14px 20px;
+            padding: 12px 20px;
             font-size: 11px;
-            letter-spacing: 2px;
-            text-transform: uppercase;
+            letter-spacing: 1px;
             color: #888;
             transition: 0.3s;
-            border-left: 3px solid transparent;
             display: flex;
             justify-content: space-between;
             align-items: center;
-        }
-
-        .menu-btn:hover { color: var(--gold); background: rgba(197, 160, 89, 0.05); }
-        .menu-btn.active { color: var(--gold); border-left-color: var(--gold); background: rgba(197, 160, 89, 0.1); }
-
-        .submenu {
-            background: rgba(0,0,0,0.3);
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.5s cubic-bezier(0, 1, 0, 1);
-        }
-
-        .submenu.open { max-height: 1000px; transition: max-height 1s ease-in; }
-
-        .submenu-item {
-            padding: 10px 45px;
-            font-size: 10px;
-            color: #555;
-            cursor: pointer;
-            transition: 0.3s;
             border-bottom: 1px solid rgba(197, 160, 89, 0.03);
         }
 
-        .submenu-item:hover { color: var(--gold); padding-left: 50px; }
+        .menu-btn:hover { color: var(--gold); background: rgba(197, 160, 89, 0.03); }
+        .menu-btn.active { color: var(--gold); background: rgba(197, 160, 89, 0.08); font-weight: 600; }
 
-        /* Modal System */
-        .modal-overlay {
-            position: fixed;
-            inset: 0;
-            background: rgba(0,0,0,0.92);
-            backdrop-filter: blur(12px);
-            z-index: 100;
+        .submenu {
+            background: rgba(0,0,0,0.2);
             display: none;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-        }
-
-        .modal-content {
-            background: var(--bg-card);
-            border: 1px solid var(--gold-muted);
-            width: 100%;
-            max-width: 1000px;
-            height: 90vh;
-            display: flex;
             flex-direction: column;
-            position: relative;
-            box-shadow: 0 0 50px rgba(0,0,0,1);
         }
 
-        .modal-header {
-            padding: 40px 60px 20px;
-            border-bottom: 1px solid rgba(197, 160, 89, 0.1);
-        }
+        .submenu.open { display: flex; }
 
-        .modal-scroll-area {
-            flex: 1;
-            overflow-y: auto;
-            padding: 20px 60px 60px;
-        }
-
-        .close-modal {
-            position: absolute;
-            top: 30px;
-            right: 40px;
-            color: var(--gold);
+        .submenu-item {
+            padding: 10px 40px;
+            font-size: 10px;
+            color: #666;
             cursor: pointer;
-            font-size: 24px;
-            z-index: 10;
+            transition: 0.3s;
+            border-left: 2px solid transparent;
+        }
+
+        .submenu-item:hover { color: var(--gold); background: rgba(197, 160, 89, 0.02); }
+        .submenu-item.selected { color: var(--gold); border-left-color: var(--gold); background: rgba(197, 160, 89, 0.05); }
+
+        .content-viewer {
+            flex: 1;
+            height: 100vh;
+            overflow-y: auto;
+            padding: 60px;
+            position: relative;
+        }
+
+        .content-container {
+            max-width: 850px;
+            margin: 0 auto;
         }
 
         .data-card {
             background: rgba(255,255,255,0.02);
-            border: 1px solid rgba(197, 160, 89, 0.05);
-            padding: 20px;
-            margin-top: 20px;
+            border: 1px solid rgba(197, 160, 89, 0.1);
+            padding: 30px;
+            margin: 30px 0;
+            border-radius: 4px;
         }
 
         .scanline {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 2px;
-            background: rgba(197, 160, 89, 0.05);
-            animation: scan 10s linear infinite;
+            background: rgba(197, 160, 89, 0.03);
+            animation: scan 8s linear infinite;
             pointer-events: none;
             z-index: 200;
         }
         @keyframes scan { from { top: 0%; } to { top: 100%; } }
+
+        .ornament {
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--gold), transparent);
+            margin: 40px 0;
+            opacity: 0.3;
+        }
     </style>
 </head>
 <body>
@@ -153,281 +141,269 @@
     <div class="scanline"></div>
 
     <div id="loading-screen" class="fixed inset-0 bg-black z-[300] flex flex-col items-center justify-center">
-        <div class="w-16 h-16 border-t-2 border-gold rounded-full animate-spin mb-4"></div>
-        <p class="cinzel text-[10px] text-gold tracking-[0.5em] animate-pulse">Sincronizando Archivos Prohibidos</p>
+        <div class="w-12 h-12 border-t-2 border-gold rounded-full animate-spin mb-6"></div>
+        <p class="cinzel text-[9px] text-gold tracking-[0.6em] animate-pulse">RECONSTRUYENDO NEXUS ARCANA</p>
     </div>
 
-    <div class="flex">
-        <!-- BARRA LATERAL -->
+    <div class="flex h-screen">
         <aside class="sidebar flex flex-col">
             <div class="p-10 border-b border-gold/10">
-                <h2 class="cinzel text-gold text-xl font-bold tracking-widest">NEXUS</h2>
-                <p class="text-[8px] opacity-40 uppercase tracking-[4px]">Biblioteca de Occidente</p>
+                <h2 class="cinzel text-gold text-2xl font-bold tracking-widest">NEXUS</h2>
+                <p class="text-[8px] opacity-40 uppercase tracking-[4px]">Sincronización Profunda</p>
             </div>
 
-            <nav class="flex-1 py-6">
-                <!-- ABRAMELÍN -->
-                <div>
-                    <button class="menu-btn" onclick="toggleSubmenu('sub-abramelin')">
-                        <span>Abramelín el Mago</span>
-                        <span class="icon">▼</span>
+            <nav class="flex-1 pb-10">
+                <div class="menu-category cinzel">Misterios de Worms</div>
+                
+                <div class="menu-group">
+                    <button class="menu-btn" onclick="toggleMenu(this, 'sub-abr-historia')">
+                        <span>LA CRÓNICA</span>
+                        <span>+</span>
                     </button>
-                    <div id="sub-abramelin" class="submenu">
-                        <div class="submenu-item" onclick="showContent('abr_l1')">Libro I: El Camino</div>
-                        <div class="submenu-item" onclick="showContent('abr_l2')">Libro II: La Preparación</div>
-                        <div class="submenu-item" onclick="showContent('abr_l3')">Libro III: Los Cuadrados</div>
-                        <div class="submenu-item" onclick="showContent('abr_angel')">El Santo Ángel Guardián</div>
+                    <div id="sub-abr-historia" class="submenu">
+                        <div class="submenu-item" onclick="loadDoc('abr_viaje', event)">El Viaje a Egipto</div>
+                        <div class="submenu-item" onclick="loadDoc('abr_maestros', event)">Falsos Maestros</div>
                     </div>
                 </div>
 
-                <!-- SALOMÓN -->
-                <div>
-                    <button class="menu-btn" onclick="toggleSubmenu('sub-salomon')">
-                        <span>Rey Salomón</span>
-                        <span class="icon">▼</span>
+                <div class="menu-group">
+                    <button class="menu-btn" onclick="toggleMenu(this, 'sub-abr-ritual')">
+                        <span>LA OPERACIÓN</span>
+                        <span>+</span>
                     </button>
-                    <div id="sub-salomon" class="submenu">
-                        <div class="submenu-item" onclick="showContent('sal_lemegeton')">Lemegeton (Goecia)</div>
-                        <div class="submenu-item" onclick="showContent('sal_clavicula')">Clavicula Salomonis</div>
-                        <div class="submenu-item" onclick="showContent('sal_pantaculos')">Pantáculos Maestros</div>
-                        <div class="submenu-item" onclick="showContent('sal_espiritus')">Jerarquía de Reyes</div>
+                    <div id="sub-abr-ritual" class="submenu">
+                        <div class="submenu-item" onclick="loadDoc('abr_preparacion', event)">La Ascesis (6 Meses)</div>
+                        <div class="submenu-item" onclick="loadDoc('abr_angel', event)">Contacto con el S.A.G.</div>
+                        <div class="submenu-item" onclick="loadDoc('abr_principes', event)">Sometimiento Infernal</div>
                     </div>
                 </div>
 
-                <div class="mt-8 px-5">
-                    <div class="h-[1px] bg-gold/10 mb-8"></div>
-                    <button class="menu-btn !border-none !p-2 opacity-50 hover:opacity-100" onclick="showContent('protocolo')">
-                        <span>Protocolos Alpha</span>
+                <div class="menu-category cinzel">Clavículas de Salomón</div>
+
+                <div class="menu-group">
+                    <button class="menu-btn" onclick="toggleMenu(this, 'sub-sal-goetia')">
+                        <span>ARTE GOETIA</span>
+                        <span>+</span>
                     </button>
+                    <div id="sub-sal-goetia" class="submenu">
+                        <div class="submenu-item" onclick="loadDoc('sal_jerarquia', event)">Jerarquías y Reyes</div>
+                        <div class="submenu-item" onclick="loadDoc('sal_sellos', event)">Sellos de Metales</div>
+                        <div class="submenu-item" onclick="loadDoc('sal_vasija', event)">La Vasija de Bronce</div>
+                    </div>
+                </div>
+
+                <div class="menu-group">
+                    <button class="menu-btn" onclick="toggleMenu(this, 'sub-sal-magia')">
+                        <span>LLAVES MAYORES</span>
+                        <span>+</span>
+                    </button>
+                    <div id="sub-sal-magia" class="submenu">
+                        <div class="submenu-item" onclick="loadDoc('sal_pantaculos', event)">Pantáculos Maestros</div>
+                        <div class="submenu-item" onclick="loadDoc('sal_herramientas', event)">Instrumentos del Arte</div>
+                    </div>
                 </div>
             </nav>
             
-            <div class="p-8 text-[9px] text-gold/30 cinzel tracking-[5px] uppercase">
-                Status: Verified
+            <div class="p-6 border-t border-gold/5 bg-black/40">
+                <div class="flex items-center gap-3">
+                    <div class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
+                    <span class="text-[9px] text-white/40 uppercase tracking-widest">Enlace Estable</span>
+                </div>
             </div>
         </aside>
 
-        <!-- AREA PRINCIPAL -->
-        <main class="flex-1 h-screen relative flex flex-col items-center justify-center p-10">
-            <div id="hero" class="text-center animate-fade">
-                <div class="relative w-48 h-48 mx-auto mb-10">
-                    <div class="absolute inset-0 border border-gold/10 rounded-full animate-[spin_20s_linear_infinite]"></div>
-                    <div class="absolute inset-4 border border-gold/20 rounded-full animate-[spin_15s_linear_infinite_reverse]"></div>
-                    <div class="absolute inset-0 flex items-center justify-center">
-                        <span class="cinzel text-gold text-4xl opacity-40">🜁</span>
-                    </div>
+        <main class="content-viewer">
+            <div id="main-content" class="content-container animate-fade-in">
+                <div class="h-[80vh] flex flex-col items-center justify-center text-center">
+                    <div class="w-32 h-[1px] bg-gold/20 mb-10"></div>
+                    <h1 class="cinzel text-5xl text-white font-bold tracking-[0.3em] mb-4">ARCHIVUM</h1>
+                    <p class="cinzel text-gold text-[10px] tracking-[0.8em] opacity-40 uppercase">Seleccione una entrada en el Nexus</p>
+                    <div class="w-32 h-[1px] bg-gold/20 mt-10"></div>
                 </div>
-                <h1 class="cinzel text-6xl text-white font-bold tracking-[0.4em] mb-4">ARCHIVUM</h1>
-                <p class="cinzel text-gold text-[10px] tracking-[0.8em] opacity-40">Acceso de Grado Iniciado</p>
             </div>
         </main>
     </div>
 
-    <!-- MODAL EXPANDIDO -->
-    <div id="modal" class="modal-overlay" onclick="handleOverlayClick(event)">
-        <div class="modal-content animate-fade">
-            <span class="close-modal" onclick="closeModal()">✕</span>
-            
-            <div class="modal-header">
-                <h2 id="m-title" class="cinzel text-4xl text-white mb-2 tracking-widest">---</h2>
-                <p id="m-subtitle" class="cinzel text-gold text-[11px] tracking-[5px] uppercase opacity-60">---</p>
-            </div>
-
-            <div class="modal-scroll-area">
-                <div id="m-body" class="text-gray-400 font-light leading-relaxed text-lg">
-                    <!-- Contenido dinámico -->
-                </div>
-            </div>
-        </div>
-    </div>
-
     <script>
-        const DATA = {
-            abr_l1: {
-                title: "Libro I: El Viaje de Abraham",
-                subtitle: "Crónica de la búsqueda del Arcano",
-                content: `
-                    <p class="mb-6">El primer libro detalla la vida de Abraham de Worms, quien confiesa haber desperdiciado años estudiando con falsos maestros y magos fraudulentos en Europa.</p>
+        const DOCS = {
+            abr_viaje: {
+                title: "El Viaje de Abraham",
+                subtitle: "De Europa al Desierto de Egipto",
+                body: `
+                    <p class="text-xl mb-8 leading-relaxed">Abraham de Worms describe su periplo iniciado en 1397 en busca de la verdadera magia. Tras encontrar a Abramelín en el desierto, recibe el sistema que permite al hombre comandar a los espíritus.</p>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="data-card !m-0">
+                            <h4 class="cinzel text-gold mb-2 uppercase text-[10px] tracking-widest">ADVERTENCIA</h4>
+                            <p class="text-sm opacity-70">Este libro no contiene rituales, sino la justificación ética y espiritual necesaria para la operación.</p>
+                        </div>
+                        <div class="data-card !m-0">
+                            <h4 class="cinzel text-gold mb-2 uppercase text-[10px] tracking-widest">REQUISITO</h4>
+                            <p class="text-sm opacity-70">Solo aquel con intenciones puras y mente firme puede sobrevivir a la manifestación de los Príncipes Infernales.</p>
+                        </div>
+                    </div>
+                `
+            },
+            abr_maestros: {
+                title: "Falsos Maestros",
+                subtitle: "Charlatanes y Peligros del Camino",
+                body: `
+                    <p class="text-xl mb-8 leading-relaxed">Abraham advierte contra los magos que conoció en su viaje, quienes usaban pactos sangrientos o trucos de feria para engañar a los incautos.</p>
                     <div class="data-card">
-                        <h4 class="text-white cinzel text-sm mb-4">Hitos del Libro I</h4>
-                        <ul class="space-y-4 text-sm">
-                            <li class="flex items-start gap-3">
-                                <span class="text-gold">◈</span>
-                                <span>El encuentro con <b>Abramelín el Egipcio</b> en el desierto, quien vivía en una colina rodeada de árboles frutales.</span>
-                            </li>
-                            <li class="flex items-start gap-3">
-                                <span class="text-gold">◈</span>
-                                <span>La entrega de los dos manuscritos originales que contenían la base de este sistema.</span>
-                            </li>
-                            <li class="flex items-start gap-3">
-                                <span class="text-gold">◈</span>
-                                <span>La instrucción de Abraham a su hijo Lamech, advirtiéndole que la magia sin piedad es una maldición.</span>
-                            </li>
+                        <h4 class="cinzel text-gold mb-4 uppercase text-sm tracking-widest">Tipos de Engaño Documentados</h4>
+                        <ul class="space-y-4 text-base">
+                            <li class="flex gap-4"><span class="text-red-500">✕</span> <span>Magia de sangre: Promesas de poder rápido a cambio de la esencia vital.</span></li>
+                            <li class="flex gap-4"><span class="text-red-500">✕</span> <span>Charlatanería: Uso de espejos y humo para simular apariciones espirituales.</span></li>
+                            <li class="flex gap-4"><span class="text-red-500">✕</span> <span>Magia Egipcia degenerada: Rituales que invocan fuerzas sin control ético.</span></li>
                         </ul>
                     </div>
-                    <p class="mt-6 text-base italic border-l-2 border-gold/20 pl-6">"No busques este conocimiento para la vanidad o el daño, pues los mismos espíritus que te servirán se convertirán en tus verdugos si tu corazón flaquea."</p>
                 `
             },
-            abr_l2: {
-                title: "Libro II: La Operación",
-                subtitle: "El Ritual de los 6 Meses (o 18 meses)",
-                content: `
-                    <p class="mb-6">Considerado el manual técnico de la purificación. Describe paso a paso cómo preparar el cuerpo y la mente para la manifestación angélica.</p>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-                        <div class="p-6 bg-white/[0.03] border border-gold/10">
-                            <h5 class="cinzel text-gold text-xs mb-3">Fase de Retiro</h5>
-                            <p class="text-xs">Aislamiento social, castidad y oración intensificada. El operador debe vivir en una casa con un oratorio orientado al este.</p>
-                        </div>
-                        <div class="p-6 bg-white/[0.03] border border-gold/10">
-                            <h5 class="cinzel text-gold text-xs mb-3">La Convocación</h5>
-                            <p class="text-xs">Tras el periodo de ascesis, el Ángel aparece. Es este Ángel quien otorga el poder de comandar a los 4 Príncipes Superiores del Infierno.</p>
-                        </div>
-                    </div>
-                    <h4 class="cinzel text-white text-lg mb-4">Los 4 Príncipes del Mal</h4>
-                    <p class="mb-4">Bajo el mando del Ángel, el mago debe convocar y someter a:</p>
-                    <div class="flex flex-wrap gap-4 mb-8">
-                        <span class="px-4 py-2 bg-red-900/10 border border-red-900/30 text-red-400 text-[10px] cinzel">LUCIFER</span>
-                        <span class="px-4 py-2 bg-red-900/10 border border-red-900/30 text-red-400 text-[10px] cinzel">LEVIATÁN</span>
-                        <span class="px-4 py-2 bg-red-900/10 border border-red-900/30 text-red-400 text-[10px] cinzel">SATÁN</span>
-                        <span class="px-4 py-2 bg-red-900/10 border border-red-900/30 text-red-400 text-[10px] cinzel">BELIAL</span>
+            abr_preparacion: {
+                title: "La Sagrada Ascesis",
+                subtitle: "Manual de Purificación del Operador",
+                body: `
+                    <p class="text-xl mb-8 leading-relaxed">Un proceso de 6 meses de retiro absoluto. El operador debe vivir en castidad, oración y soledad casi total para sintonizar su vibración con la del Ángel.</p>
+                    <div class="data-card">
+                        <h4 class="cinzel text-gold mb-4 uppercase text-sm tracking-widest">Fases de la Purificación</h4>
+                        <p class="mb-4">Mes 1-2: Retiro social y limpieza del cuerpo.</p>
+                        <p class="mb-4">Mes 3-4: Oración intensiva y estudio del oratorio.</p>
+                        <p>Mes 5-6: Invocación final y espera de la señal angélica.</p>
                     </div>
                 `
             },
-            abr_l3: {
-                title: "Libro III: Los Cuadrados",
-                subtitle: "Codificación de la Voluntad",
-                content: `
-                    <p class="mb-6">Contiene los famosos cuadrados mágicos. Estos no funcionan por "fe", sino como sellos matemáticos que los espíritus están obligados a reconocer.</p>
-                    <div class="space-y-8">
-                        <div class="data-card">
-                            <h4 class="cinzel text-gold text-sm mb-2">Para Volar en el Aire</h4>
-                            <p class="text-xs mb-4">El espíritu asignado transportará al operador físicamente o en visión.</p>
-                            <div class="grid grid-cols-4 w-32 mx-auto gap-1 text-center font-mono text-white">
-                                <div class="border border-gold/20 p-1">C</div><div class="border border-gold/20 p-1">A</div><div class="border border-gold/20 p-1">S</div><div class="border border-gold/20 p-1">A</div>
-                                <div class="border border-gold/20 p-1">A</div><div class="border border-gold/20 p-1">R</div><div class="border border-gold/20 p-1">E</div><div class="border border-gold/20 p-1">S</div>
-                                <div class="border border-gold/20 p-1">S</div><div class="border border-gold/20 p-1">E</div><div class="border border-gold/20 p-1">R</div><div class="border border-gold/20 p-1">A</div>
-                                <div class="border border-gold/20 p-1">A</div><div class="border border-gold/20 p-1">S</div><div class="border border-gold/20 p-1">A</div><div class="border border-gold/20 p-1">C</div>
-                            </div>
-                        </div>
-                        <div class="data-card">
-                            <h4 class="cinzel text-gold text-sm mb-2">Otros Usos Documentados</h4>
-                            <ul class="text-xs space-y-2">
-                                <li>• Sanación de enfermedades terminales.</li>
-                                <li>• Descubrimiento de tesoros ocultos (metáfora de conocimiento).</li>
-                                <li>• Invisibilidad ante ojos profanos.</li>
-                                <li>• Transformación de la apariencia física.</li>
-                            </ul>
-                        </div>
+            abr_angel: {
+                title: "El Santo Ángel Guardián",
+                subtitle: "Conocimiento y Conversación",
+                body: `
+                    <p class="text-xl mb-8 leading-relaxed">La meta final. Al contactar al Ángel, el mago recibe su nombre secreto y el poder de dominar las regiones inferiores sin ser corrompido.</p>
+                    <div class="ornament"></div>
+                    <p class="italic text-center opacity-60">"El Ángel es tu verdadero ser, la chispa divina que te guiará a través del abismo."</p>
+                `
+            },
+            abr_principes: {
+                title: "Sometimiento Infernal",
+                subtitle: "El Comando de la Sombra",
+                body: `
+                    <p class="text-xl mb-8 leading-relaxed">Tras el contacto angélico, el mago convoca a los 4 Príncipes Superiores: Lucifer, Leviatán, Satán y Belial, para obligarlos a jurar obediencia.</p>
+                    <div class="p-8 border border-red-900/20 bg-red-900/5">
+                        <h5 class="cinzel text-red-500 mb-2">Protocolo de Evocación</h5>
+                        <p class="text-sm">Se realiza en el tercer día tras la manifestación del Ángel. Los espíritus deben aparecer de forma amable y sin ruidos espantosos bajo el mando de la vara de almendro.</p>
                     </div>
                 `
             },
-            sal_lemegeton: {
-                title: "La Goecia de Salomón",
-                subtitle: "Los 72 Espíritus Infernales",
-                content: `
-                    <p class="mb-6">El Lemegeton Clavicula Salomonis es un tratado que detalla cómo el Rey Salomón invocó y encerró a 72 demonios en una vasija de bronce mediante el uso de sellos sagrados.</p>
-                    <div class="grid grid-cols-1 gap-4">
-                        <div class="p-6 border-l-4 border-gold bg-white/5">
-                            <h5 class="cinzel text-white text-sm mb-2">01. REY BAEL</h5>
-                            <p class="text-xs">Se manifiesta con tres cabezas: hombre, gato y sapo. Enseña el arte de la invisibilidad y comanda 66 legiones de espíritus.</p>
-                        </div>
-                        <div class="p-6 border-l-4 border-gold bg-white/5">
-                            <h5 class="cinzel text-white text-sm mb-2">09. REY PAIMON</h5>
-                            <p class="text-xs">Muy obediente a Lucifer. Aparece como un hombre coronado sobre un dromedario. Enseña todas las artes, ciencias y secretos de la Tierra.</p>
-                        </div>
-                        <div class="p-6 border-l-4 border-gold bg-white/5">
-                            <h5 class="cinzel text-white text-sm mb-2">13. REY BELETH</h5>
-                            <p class="text-xs">Terrible y poderoso, cabalga un caballo pálido. Solo puede ser controlado con un anillo de plata en el dedo medio de la mano izquierda.</p>
-                        </div>
+            sal_jerarquia: {
+                title: "Jerarquía de la Goecia",
+                subtitle: "Los 72 Espíritus del Rey Salomón",
+                body: `
+                    <p class="text-xl mb-8 leading-relaxed">La Goecia detalla las oficinas y rangos de los espíritus encerrados por Salomón. Cada uno tiene un sello y una virtud específica.</p>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="p-4 border border-gold/10">Bael (Rey) - Invisibilidad</div>
+                        <div class="p-4 border border-gold/10">Agares (Duque) - Idiomas</div>
+                        <div class="p-4 border border-gold/10">Paimon (Rey) - Ciencias</div>
+                        <div class="p-4 border border-gold/10">Asmodeus (Rey) - Virtudes</div>
                     </div>
-                    <p class="mt-8 text-sm opacity-60 italic text-center">"Cada sello debe ser grabado en el metal correspondiente al planeta del espíritu."</p>
                 `
             },
-            sal_clavicula: {
-                title: "Las Clavículas Mayores",
-                subtitle: "La Llave Maestra de Salomón",
-                content: `
-                    <p class="mb-6">Se divide en dos libros que tratan sobre el equipamiento del mago y las oraciones de protección.</p>
-                    <div class="space-y-6">
-                        <div class="data-card">
-                            <h4 class="cinzel text-gold text-xs mb-3">Instrumentos del Arte</h4>
-                            <p class="text-sm">El Athame (Cuchillo), la Espada, el Báculo y el Lápiz de Arte. Todos deben ser purificados con agua de hisopo y exorcizados en la hora de Mercurio.</p>
-                        </div>
-                        <div class="data-card">
-                            <h4 class="cinzel text-gold text-xs mb-3">El Círculo Mágico</h4>
-                            <p class="text-sm">Un límite infranqueable. Ningún espíritu puede tocar al operador mientras este permanezca dentro del círculo trazado con la espada de mando.</p>
-                        </div>
+            sal_sellos: {
+                title: "Sellos de Metales",
+                subtitle: "Correspondencias Planetarias",
+                body: `
+                    <p class="text-xl mb-8 leading-relaxed">Para que un sello goético sea efectivo, debe ser grabado en el metal correspondiente a su rango planetario.</p>
+                    <ul class="space-y-2 text-base">
+                        <li>• Reyes: Oro (Sol)</li>
+                        <li>• Duques: Cobre (Venus)</li>
+                        <li>• Príncipes: Estaño (Júpiter)</li>
+                        <li>• Marqueses: Plata (Luna)</li>
+                    </ul>
+                `
+            },
+            sal_vasija: {
+                title: "La Vasija de Bronce",
+                subtitle: "El Arte del Confinamiento",
+                body: `
+                    <p class="text-xl mb-8 leading-relaxed">Salomón encerró a los espíritus en una vasija sellada con el Sello de Dios. Este secreto permitía al rey usarlos para construir el Templo de Jerusalén.</p>
+                    <div class="data-card text-center italic">
+                        "El bronce representa la fuerza terrestre, el sello representa la voluntad divina."
                     </div>
                 `
             },
             sal_pantaculos: {
-                title: "Pantáculos Planetarios",
-                subtitle: "Sellos de Poder Cósmico",
-                content: `
-                    <p class="mb-8">Los pantáculos son diseños geométricos que capturan la "virtud" de los planetas. Se utilizan para protección, amor, dinero o guerra.</p>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                        <div>
-                            <h5 class="cinzel text-gold text-xs mb-4">Cuarto Pantáculo de Júpiter</h5>
-                            <p class="text-xs">Sirve para adquirir riquezas y honor, y para poseer gran benevolencia.</p>
-                            <div class="mt-4 w-32 h-32 mx-auto rounded-full border-2 border-gold flex items-center justify-center opacity-40">
-                                <span class="text-4xl text-gold">♃</span>
-                            </div>
-                        </div>
-                        <div>
-                            <h5 class="cinzel text-gold text-xs mb-4">Segundo Pantáculo de Marte</h5>
-                            <p class="text-xs">Sirve con gran éxito contra todo tipo de enfermedades si se aplica a la parte afectada.</p>
-                            <div class="mt-4 w-32 h-32 mx-auto rounded-full border-2 border-red-500 flex items-center justify-center opacity-40">
-                                <span class="text-4xl text-red-500">♂</span>
-                            </div>
-                        </div>
-                    </div>
+                title: "Pantáculos Maestros",
+                subtitle: "Protección y Poder Planetario",
+                body: `
+                    <p class="text-xl mb-8 leading-relaxed">Diseños geométricos que capturan la energía de los 7 planetas antiguos. Fundamentales para evitar el acoso de los espíritus durante la operación.</p>
                 `
             },
-            protocolo: {
-                title: "Protocolo de Seguridad",
-                subtitle: "Advertencia del Archivero",
-                content: `
-                    <div class="p-10 border border-red-900/40 bg-red-900/5 text-center">
-                        <h4 class="cinzel text-red-500 text-xl mb-6">PELIGRO DE SOBRECARGA</h4>
-                        <p class="text-sm text-gray-400 mb-6">El estudio de estos archivos altera la percepción psíquica. Se recomienda no exceder los 30 minutos de consulta diaria si no se cuenta con un escudo de destierro activo.</p>
-                        <p class="text-[10px] text-red-500 uppercase tracking-widest">Sincronía: 98.4% // Estable</p>
+            sal_herramientas: {
+                title: "Instrumentos del Arte",
+                subtitle: "El Equipamiento del Mago",
+                body: `
+                    <p class="text-xl mb-8 leading-relaxed">Cada herramienta debe ser fabricada o comprada en horas astrológicas específicas y exorcizada antes de su uso.</p>
+                    <div class="flex flex-wrap gap-4">
+                        <span class="px-4 py-2 border border-gold/20 cinzel text-[10px]">La Espada</span>
+                        <span class="px-4 py-2 border border-gold/20 cinzel text-[10px]">El Athame</span>
+                        <span class="px-4 py-2 border border-gold/20 cinzel text-[10px]">La Túnica Blanca</span>
+                        <span class="px-4 py-2 border border-gold/20 cinzel text-[10px]">El Anillo</span>
                     </div>
                 `
             }
         };
 
-        function toggleSubmenu(id) {
-            const sub = document.getElementById(id);
-            const isOpen = sub.classList.contains('open');
-            document.querySelectorAll('.submenu').forEach(s => s.classList.remove('open'));
-            if (!isOpen) sub.classList.add('open');
-        }
-
-        function showContent(id) {
-            const item = DATA[id];
-            if (!item) return;
-
-            document.getElementById('m-title').innerText = item.title;
-            document.getElementById('m-subtitle').innerText = item.subtitle;
-            document.getElementById('m-body').innerHTML = item.content;
+        function toggleMenu(btn, id) {
+            const submenu = document.getElementById(id);
+            const isOpen = submenu.classList.contains('open');
             
-            document.getElementById('modal').style.display = 'flex';
-            document.querySelector('.modal-scroll-area').scrollTop = 0;
+            document.querySelectorAll('.submenu').forEach(s => s.classList.remove('open'));
+            document.querySelectorAll('.menu-btn').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.menu-btn span:last-child').forEach(s => s.innerText = '+');
+
+            if (!isOpen) {
+                submenu.classList.add('open');
+                btn.classList.add('active');
+                btn.querySelector('span:last-child').innerText = '−';
+            }
         }
 
-        function closeModal() {
-            document.getElementById('modal').style.display = 'none';
-        }
+        function loadDoc(id, event) {
+            const data = DOCS[id];
+            if (!data) {
+                console.error("Documento no encontrado:", id);
+                return;
+            }
 
-        function handleOverlayClick(e) {
-            if (e.target.id === 'modal') closeModal();
+            document.querySelectorAll('.submenu-item').forEach(i => i.classList.remove('selected'));
+            if (event && event.target) {
+                event.target.classList.add('selected');
+            }
+
+            const container = document.getElementById('main-content');
+            container.style.opacity = '0';
+            container.style.transform = 'translateY(10px)';
+
+            setTimeout(() => {
+                container.innerHTML = `
+                    <div class="mb-12">
+                        <p class="cinzel text-gold text-[10px] tracking-[0.5em] mb-2 uppercase">${data.subtitle}</p>
+                        <h1 class="cinzel text-6xl text-white font-bold tracking-tighter">${data.title}</h1>
+                        <div class="w-20 h-[2px] bg-gold mt-6"></div>
+                    </div>
+                    <div class="doc-body text-gray-400 font-light leading-relaxed text-lg">
+                        ${data.body}
+                    </div>
+                    <div class="mt-20 pt-10 border-t border-gold/5 text-[9px] cinzel opacity-20 tracking-[1em] text-center">
+                        NEXUS VERIFIED • AUTHENTIC CONTENT
+                    </div>
+                `;
+                container.style.opacity = '1';
+                container.style.transform = 'translateY(0)';
+            }, 300);
         }
 
         window.addEventListener('load', () => {
             setTimeout(() => {
                 document.getElementById('loading-screen').style.opacity = '0';
                 setTimeout(() => document.getElementById('loading-screen').style.display = 'none', 500);
-            }, 2000);
+            }, 1500);
         });
     </script>
 </body>
